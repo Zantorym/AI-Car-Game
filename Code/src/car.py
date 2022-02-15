@@ -61,9 +61,9 @@ class Car:
         pass
 
     def accelerate(self, dvel):
-        dvel = dvel * 2
+        dvel = dvel
 
-        self.vel = self.vel + dvel
+        self.vel = self.vel + dvel*0.5
 
         if self.vel > self.maxvel:
             self.vel = self.maxvel
@@ -72,7 +72,7 @@ class Car:
             self.vel = -self.maxvel
 
     def turn(self, dir):
-        self.soll_angle = self.soll_angle + dir * math.radians(15)
+        self.soll_angle = self.soll_angle + dir * math.radians(5)
 
     def update(self):
 

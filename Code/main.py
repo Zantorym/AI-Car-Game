@@ -58,6 +58,7 @@ def render(car, action, screen, key_strokes):
 
     # TODO: Update car pos
     car.update()
+    car.draw(screen)
 
     if action == 1:
         pygame.draw.rect(screen, (0, 255, 0), (850, 50, 40, 40))
