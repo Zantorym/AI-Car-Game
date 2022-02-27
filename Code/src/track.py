@@ -1,4 +1,5 @@
 import cv2
+import pygame
 
 
 class Track:
@@ -7,7 +8,7 @@ class Track:
         __TRACKS_DIR = '../assets/'
         self.track_id = track_id
         self.track_path = __TRACKS_DIR + "track" + track_id + ".png"
-        self.setContours()
+        self.contours = self.setContours()
 
     def setContours(self):
         image = cv2.imread(self.track_path)
@@ -20,3 +21,6 @@ class Track:
 
     def getContours(self):
         return self.contours
+
+    def getImage(self):
+        return pygame.image.load(self.track_path).convert()

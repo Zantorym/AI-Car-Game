@@ -1,8 +1,9 @@
-import src.commonUtils as cu
 from src.commonUtils import myPoint, myLine, rotate, distance, rotateRect
 from src.ray import Ray
+import src.Constants as c
 import math
 import pygame
+import cv2
 
 GOALREWARD = 1
 
@@ -187,6 +188,22 @@ class Car:
 
         observations.append(self.vel / self.maxvel)
         return observations
+
+    def check_collision(self, contours_list):
+        """
+        :argument
+        contours_list: A list that containing the list of the outer points of the track and the inner points of the track
+
+        Function to return if the car is inside a track or outside
+        """
+        points = [self.p1, self.p2, self.p3, self.p4]
+        for point in points:
+            outer_bool = cv2.pointPolygonTest(contours_list[0], point, False)
+            inner_bool = cv2.pointPolygonTest(contours_list[1], point, False)
+            if not (outer_bool == 1 and inner_bool != 1):
+                # TODO: Collision occurs
+                pygame.event.post(pygame.event.Event(c.COLLISION_EVENT))
+
 
     def collision(self, wall):
 

@@ -1,42 +1,31 @@
 import cv2
 import pygame
 from src.car import Car
+from src.track import Track
+import src.Constants as c
 
 pygame.init()
 pygame.font.init()
 
-FPS = 120
-WIDTH = 1000
-HEIGHT = 700
-OFFSET = 100
-GREY = pygame.Color(128,128,128)
-BLACK = pygame.Color(0,0,0)
-L_GREEN = pygame.Color(0, 220, 0)
-D_GREEN = pygame.Color(0,80,0)
-
-SPEED_FONT = pygame.font.SysFont('comicsans', 50)
-POINTS_FONT = pygame.font.SysFont('comicsans', 50)
-W_FONT = pygame.font.SysFont('comicsans', 32)
-A_FONT = pygame.font.SysFont('comicsans', 32)
-S_FONT = pygame.font.SysFont('comicsans', 32)
-D_FONT = pygame.font.SysFont('comicsans', 32)
-
 pygame.display.set_caption("Crazy Driver")
-SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
+SCREEN = pygame.display.set_mode((c.WIDTH, c.HEIGHT))
 SCREEN.fill((0, 0, 0))
-back_image = pygame.image.load("assets/track.png").convert()
-back_rect = back_image.get_rect().move(0, OFFSET)
+
+track = Track(1)
+back_image = track.getImage()
+back_rect = back_image.get_rect().move(0, c.OFFSET)
+
 action_space = None
 observation_space = None
 game_reward = 0
 score = 0
-terminate_run = pygame.USEREVENT + 1
+
 key_strokes = {'w': False, 'a': False, 's': False, 'd': False}
 
 
 def show_key_strokes(key_strokes):
-    active = D_GREEN
-    default = BLACK
+    active = c.D_GREEN
+    default = c.BLACK
     w = active if key_strokes['w'] else default
     a = active if key_strokes['a'] else default
     s = active if key_strokes['s'] else default
@@ -47,13 +36,13 @@ def show_key_strokes(key_strokes):
     # pygame.draw.rect(SCREEN, s_bg, (905, 55, 40, 40), 2)  # S
     # pygame.draw.rect(SCREEN, d_bg, (955, 55, 40, 40), 2)  # D
 
-    SCREEN.blit(W_FONT.render(f'W', False, w), dest=(907, 5))  # W
-    SCREEN.blit(A_FONT.render(f'A', True, a), dest=(857, 55))  # A
-    SCREEN.blit(S_FONT.render(f'S', True, s), dest=(907, 55))  # S
-    SCREEN.blit(D_FONT.render(f'D', True, d), dest=(957, 55))  # D
+    SCREEN.blit(c.W_FONT.render(f'W', False, w), dest=(907, 5))  # W
+    SCREEN.blit(c.A_FONT.render(f'A', True, a), dest=(857, 55))  # A
+    SCREEN.blit(c.S_FONT.render(f'S', True, s), dest=(907, 55))  # S
+    SCREEN.blit(c.D_FONT.render(f'D', True, d), dest=(957, 55))  # D
 
 def render(car, action, screen, key_strokes):
-    screen.fill(tuple(BLACK))
+    screen.fill(tuple(c.BLACK))
     screen.blit(back_image, back_rect)
 
     # TODO: Update car pos
@@ -73,10 +62,10 @@ def render(car, action, screen, key_strokes):
     show_key_strokes(key_strokes)
 
     # score
-    text_surface = POINTS_FONT.render(f'Points {car.points}', True, pygame.Color('green'))
+    text_surface = c.POINTS_FONT.render(f'Points {car.points}', True, pygame.Color('green'))
     screen.blit(text_surface, dest=(0, 0))
     # speed
-    text_surface = SPEED_FONT.render(f'Speed {car.vel * -1}', True, pygame.Color('green'))
+    text_surface = c.SPEED_FONT.render(f'Speed {car.vel * -1}', True, pygame.Color('green'))
     screen.blit(text_surface, dest=(420, 0))
 
 
@@ -89,13 +78,17 @@ def main():
     run = True
 
     while run:
-        clock.tick(FPS)
+        clock.tick(c.FPS)
         for event in pygame.event.get():
 
             # Exiting the game
             if event.type == pygame.QUIT:
                 run = False
                 pygame.quit()
+
+            if event.type == c.COLLISION_EVENT:
+                # TODO: action to be done on collision
+                pass
 
             # Checking user event
             keys_pressed = pygame.key.get_pressed()
@@ -115,6 +108,7 @@ def main():
                 action = 4
             # TODO: do we want to implement a mechanism for constant speed without a key press
             car.action(action)
+            car.check_collision(track.getContours())
             actions.append(action)
 
             # Store the user data for imitation learning
