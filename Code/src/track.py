@@ -4,10 +4,10 @@ import pygame
 
 class Track:
 
-    def __init__(self, track_id=1):
-        __TRACKS_DIR = '../assets/'
+    def __init__(self, track_id=''):
+        __TRACKS_DIR = 'assets/'
         self.track_id = track_id
-        self.track_path = __TRACKS_DIR + "track" + track_id + ".png"
+        self.track_path = __TRACKS_DIR + "track" + str(track_id) + ".png"
         self.contours = self.setContours()
 
     def setContours(self):

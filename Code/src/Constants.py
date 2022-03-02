@@ -1,8 +1,10 @@
 import pygame
 
+pygame.font.init()
+
 FPS = 120
-WIDTH = 1000
-HEIGHT = 700
+WIDTH = 1200
+HEIGHT = 900
 OFFSET = 100
 GREY = pygame.Color(128,128,128)
 BLACK = pygame.Color(0,0,0)

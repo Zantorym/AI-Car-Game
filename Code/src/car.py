@@ -8,7 +8,7 @@ import cv2
 GOALREWARD = 1
 
 class Car:
-    def __init__(self, car_path, x, y):
+    def __init__(self, x, y, car_path='assets/car.png'):
         self.pt = myPoint(x, y)
         self.x = x
         self.y = y
@@ -17,9 +17,10 @@ class Car:
 
         self.points = 0
 
-        self.original_image = pygame.image.load(car_path).convert()
-        self.image = self.original_image  # This will reference the rotated image.
-        self.image.set_colorkey((0, 0, 0))
+        if car_path:
+            self.original_image = pygame.image.load(car_path).convert()
+            self.image = self.original_image  # This will reference the rotated image.
+            self.image.set_colorkey((0, 0, 0))
         self.rect = self.image.get_rect().move(self.x, self.y)
 
         self.angle = math.radians(180)
@@ -44,9 +45,12 @@ class Car:
         self.p3 = self.pt3
         self.p4 = self.pt4
 
-        print(self.p1, self.p2, self.p3, self.p4)  # TODO: to check which point corresponds to which corner
+        # print(self.p1, self.p2, self.p3, self.p4)  # TODO: to check which point corresponds to which corner
 
         self.distances = []
+
+    def respawn(self):
+        self.__init__(500, 300)
 
     def action(self, choice):
         if choice == 0:                     # Continue straight with same speed
@@ -198,9 +202,11 @@ class Car:
         """
         points = [self.p1, self.p2, self.p3, self.p4]
         for point in points:
-            outer_bool = cv2.pointPolygonTest(contours_list[0], point, False)
-            inner_bool = cv2.pointPolygonTest(contours_list[1], point, False)
-            if not (outer_bool == 1 and inner_bool != 1):
+            print(len(contours_list))
+            outer_bool = cv2.pointPolygonTest(contours_list[0], point.getPoint(), False)
+            inner_bool = cv2.pointPolygonTest(contours_list[1], point.getPoint(), False)
+            print(outer_bool, inner_bool)
+            if not (outer_bool != 1 and inner_bool == 1):
                 # TODO: Collision occurs
                 pygame.event.post(pygame.event.Event(c.COLLISION_EVENT))
 

@@ -2,11 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="840c7e7d-425c-4dcd-bf17-1e67d7b4636e" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Code/src/Constants.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/Code/src/commonUtils.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Code/src/game.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Code/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Code/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Code/src/Constants.py" beforeDir="false" afterPath="$PROJECT_DIR$/Code/src/Constants.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Code/src/car.py" beforeDir="false" afterPath="$PROJECT_DIR$/Code/src/car.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Code/src/track.py" beforeDir="false" afterPath="$PROJECT_DIR$/Code/src/track.py" afterDir="false" />
     </list>

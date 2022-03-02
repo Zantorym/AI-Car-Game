@@ -11,7 +11,7 @@ pygame.display.set_caption("Crazy Driver")
 SCREEN = pygame.display.set_mode((c.WIDTH, c.HEIGHT))
 SCREEN.fill((0, 0, 0))
 
-track = Track(1)
+track = Track(2)
 back_image = track.getImage()
 back_rect = back_image.get_rect().move(0, c.OFFSET)
 
@@ -70,9 +70,7 @@ def render(car, action, screen, key_strokes):
 
 
 def main():
-    track_path = 'assets/track.png'
-    img = cv2.imread('assets/track1.png', cv2.IMREAD_GRAYSCALE)
-    car = Car('assets/car.png', 500, 300)
+    car = Car(500, 300)
     clock = pygame.time.Clock()
     data = []
     run = True
@@ -88,7 +86,9 @@ def main():
 
             if event.type == c.COLLISION_EVENT:
                 # TODO: action to be done on collision
-                pass
+                # car.respawn()
+                run = False
+                pygame.quit()
 
             # Checking user event
             keys_pressed = pygame.key.get_pressed()
@@ -108,7 +108,7 @@ def main():
                 action = 4
             # TODO: do we want to implement a mechanism for constant speed without a key press
             car.action(action)
-            car.check_collision(track.getContours())
+            # car.check_collision(track.getContours())
             actions.append(action)
 
             # Store the user data for imitation learning
