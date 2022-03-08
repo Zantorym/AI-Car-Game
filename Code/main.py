@@ -108,7 +108,6 @@ def main():
                 action = 4
             # TODO: do we want to implement a mechanism for constant speed without a key press
             car.action(action)
-            # car.check_collision(track.getContours())
             actions.append(action)
 
             # Store the user data for imitation learning
@@ -125,6 +124,7 @@ def main():
             'd': keys_pressed[pygame.K_d]
         }
 
+        car.check_collision(track.getContours())
         render(car, action, SCREEN, key_strokes)
         pygame.display.update()
 

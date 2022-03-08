@@ -1,5 +1,5 @@
-from src.commonUtils import myPoint, myLine, rotate, distance, rotateRect
-from src.ray import Ray
+from .commonUtils import myPoint, myLine, rotate, distance, rotateRect
+from .ray import Ray
 import src.Constants as c
 import math
 import pygame
@@ -202,52 +202,12 @@ class Car:
         """
         points = [self.p1, self.p2, self.p3, self.p4]
         for point in points:
-            print(len(contours_list))
             outer_bool = cv2.pointPolygonTest(contours_list[0], point.getPoint(), False)
             inner_bool = cv2.pointPolygonTest(contours_list[1], point.getPoint(), False)
             print(outer_bool, inner_bool)
-            if not (outer_bool != 1 and inner_bool == 1):
+            if not (outer_bool == 1 and inner_bool == 1):
                 # TODO: Collision occurs
                 pygame.event.post(pygame.event.Event(c.COLLISION_EVENT))
-
-
-    def collision(self, wall):
-
-        line1 = myLine(self.p1, self.p2)
-        line2 = myLine(self.p2, self.p3)
-        line3 = myLine(self.p3, self.p4)
-        line4 = myLine(self.p4, self.p1)
-
-        x1 = wall.x1
-        y1 = wall.y1
-        x2 = wall.x2
-        y2 = wall.y2
-
-        lines = []
-        lines.append(line1)
-        lines.append(line2)
-        lines.append(line3)
-        lines.append(line4)
-
-        for li in lines:
-
-            x3 = li.pt1.x
-            y3 = li.pt1.y
-            x4 = li.pt2.x
-            y4 = li.pt2.y
-
-            den = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4)
-
-            if (den == 0):
-                den = 0
-            else:
-                t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / den
-                u = -((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / den
-
-                if t > 0 and t < 1 and u < 1 and u > 0:
-                    return (True)
-
-        return (False)
 
     def score(self, goal):
 

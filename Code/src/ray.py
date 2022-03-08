@@ -1,4 +1,4 @@
-from src.commonUtils import myPoint, rotate
+from .commonUtils import myPoint, rotate
 import math
 
 
