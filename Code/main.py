@@ -4,6 +4,8 @@ from src.car import Car
 from src.track import Track
 import src.Constants as c
 
+import sys
+
 pygame.init()
 pygame.font.init()
 
@@ -11,7 +13,7 @@ pygame.display.set_caption("Crazy Driver")
 SCREEN = pygame.display.set_mode((c.WIDTH, c.HEIGHT))
 SCREEN.fill((0, 0, 0))
 
-track = Track(2)
+track = Track()
 back_image = track.getImage()
 back_rect = back_image.get_rect().move(0, c.OFFSET)
 
@@ -40,6 +42,7 @@ def show_key_strokes(key_strokes):
     SCREEN.blit(c.A_FONT.render(f'A', True, a), dest=(857, 55))  # A
     SCREEN.blit(c.S_FONT.render(f'S', True, s), dest=(907, 55))  # S
     SCREEN.blit(c.D_FONT.render(f'D', True, d), dest=(957, 55))  # D
+
 
 def render(car, action, screen, key_strokes):
     screen.fill(tuple(c.BLACK))
@@ -73,22 +76,21 @@ def main():
     car = Car(500, 300)
     clock = pygame.time.Clock()
     data = []
-    run = True
 
-    while run:
+    while True:
         clock.tick(c.FPS)
         for event in pygame.event.get():
 
             # Exiting the game
             if event.type == pygame.QUIT:
-                run = False
                 pygame.quit()
+                sys.exit()
 
             if event.type == c.COLLISION_EVENT:
                 # TODO: action to be done on collision
                 # car.respawn()
-                run = False
                 pygame.quit()
+                sys.exit()
 
             # Checking user event
             keys_pressed = pygame.key.get_pressed()
@@ -127,6 +129,7 @@ def main():
         car.check_collision(track.getContours())
         render(car, action, SCREEN, key_strokes)
         pygame.display.update()
+
 
 if __name__ == '__main__':
     main()
