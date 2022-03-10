@@ -2,7 +2,7 @@ import pygame
 
 pygame.font.init()
 
-FPS = 120
+FPS = 60
 WIDTH = 1200
 HEIGHT = 900
 OFFSET = 100
@@ -19,3 +19,9 @@ S_FONT = pygame.font.SysFont('comicsans', 32)
 D_FONT = pygame.font.SysFont('comicsans', 32)
 
 COLLISION_EVENT = pygame.USEREVENT + 1
+
+# Car related default values
+STEER_MANEURABILITY = 5
+MAX_STEER_ANGLE = 30
+ACCELERATION = 0.05
+MAX_ACCELERATION = 2
