@@ -43,7 +43,7 @@ class Car(pygame.sprite.Sprite):
         self.max_acceleration = max_acceleration
 
         self.image = self.sprite.copy()
-        self.rect = self.position - Vector2(self.image.get_size()) * 0.5
+        self.rect = self.image.get_rect(center=self.position)
         self.mask = pygame.mask.from_surface(self.image)
 
     def draw(self, surface):
@@ -64,7 +64,7 @@ class Car(pygame.sprite.Sprite):
         self.angle += degrees(angular_velocity)
 
         self.image = pygame.transform.rotate(self.sprite, self.angle)
-        self.rect = self.position - Vector2(self.image.get_size()) * 0.5
+        self.rect = self.image.get_rect(center=self.position)
         self.mask = pygame.mask.from_surface(self.image)
 
 

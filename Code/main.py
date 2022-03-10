@@ -145,11 +145,7 @@ def main():
         render_controls(SCREEN, keys_pressed)
 
         # Collision Detection
-        # moving_object_rect = car.rect
-        # obstacle_rect = track.rect
-        # offset = (obstacle_rect.x - moving_object_rect.x), (obstacle_rect.y - moving_object_rect.y)
-        # if (car.mask.overlap(track.mask, offset)):
-        if (pygame.sprite.spritecollide(track, car_group, False, collided=pygame.sprite.collide_mask)):
+        if (pygame.sprite.spritecollide(car, obstacles_group, False, collided=pygame.sprite.collide_mask)):
             # returned list is not empty
             collision_detected = True
         else:
