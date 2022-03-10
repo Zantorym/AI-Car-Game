@@ -2,13 +2,19 @@ import cv2
 import pygame
 
 
-class Track:
+class Track(pygame.sprite.Sprite):
 
     def __init__(self, track_id=''):
+        super(Track, self).__init__()
+
         __TRACKS_DIR = 'assets/'
         self.track_id = track_id
         self.track_path = __TRACKS_DIR + "track" + str(track_id) + ".png"
         self.contours = self.setContours()
+
+        self.image = pygame.image.load(self.track_path).convert_alpha()
+        self.rect = self.image.get_rect(topleft=(0, 100))
+        self.mask = pygame.mask.from_surface(self.image)
 
     def setContours(self):
         image = cv2.imread(self.track_path)

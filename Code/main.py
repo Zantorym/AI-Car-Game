@@ -3,6 +3,7 @@ import pygame
 from src.car import Car, Steering, Acceleration
 from src.track import Track
 import src.Constants as c
+from src.commonUtils import print_text
 
 import sys
 
@@ -21,11 +22,10 @@ pygame.font.init()
 
 pygame.display.set_caption("Crazy Driver")
 SCREEN = pygame.display.set_mode((c.WIDTH, c.HEIGHT))
-SCREEN.fill((0, 0, 0))
+SCREEN.fill((255, 255, 255))
 
-track = Track(2)
-track_back_image = track.getImage().convert()
-track_back_rect = track_back_image.get_rect().move(0, c.OFFSET)
+# track_back_image = track.getImage().convert()
+# track_back_rect = track_back_image.get_rect().move(0, c.OFFSET))
 
 action_space = None
 observation_space = None
@@ -34,8 +34,8 @@ score = 0
 
 key_strokes = {'w': False, 'a': False, 's': False, 'd': False}
 
-def display_track_background():
-    SCREEN.blit(track_back_image, track_back_rect)
+# def display_track_background():
+#     SCREEN.blit(track.image, track.rect)
 
 def show_key_strokes(surface, key_strokes):
     active = c.D_GREEN
@@ -103,12 +103,21 @@ def update_car(car, keys_pressed):
 
 
 def main():
-    car = Car(c.WIDTH / 2, c.HEIGHT / 2, 45)
     clock = pygame.time.Clock()
-    data = []
+    # data = []
+
+    track = Track(2)
+    car = Car(c.WIDTH / 2, c.HEIGHT / 2, 45, sprite_path='assets/car.png')
+
+    all_sprites_group = pygame.sprite.Group()
+    all_sprites_group.add(track)
+    all_sprites_group.add(car)
+    obstacles_group = pygame.sprite.Group()
+    obstacles_group.add(track)
+    car_group = pygame.sprite.GroupSingle()
+    car_group.add(car)
 
     running = True
-
     while running:
         for event in pygame.event.get():
             # Check for KEYDOWN event
@@ -127,13 +136,38 @@ def main():
         # Handle game functions
         update_car(car, keys_pressed)
         # car.update(keys_pressed)
-            
-        display_track_background()
+                
+        # Rendering
+        # display_track_background()
+        SCREEN.fill((255, 255, 255))
+        SCREEN.blit(track.image, track.rect)
         car.draw(SCREEN)
         render_controls(SCREEN, keys_pressed)
+
+        # Collision Detection
+        # moving_object_rect = car.rect
+        # obstacle_rect = track.rect
+        # offset = (obstacle_rect.x - moving_object_rect.x), (obstacle_rect.y - moving_object_rect.y)
+        # if (car.mask.overlap(track.mask, offset)):
+        if (pygame.sprite.spritecollide(track, car_group, False, collided=pygame.sprite.collide_mask)):
+            # returned list is not empty
+            collision_detected = True
+        else:
+            collision_detected = False
+
+        if (collision_detected):
+            print_text(SCREEN, 'COLLISSION', pygame.font.Font(None, 64))
+        else:
+            print_text(SCREEN, 'NO', pygame.font.Font(None, 64))
+
+        # Update Screen
         pygame.display.flip()
 
+
         clock.tick(c.FPS)
+
+    pygame.quit()
+    sys.exit()
 
     # while True:
     #     clock.tick(c.FPS)

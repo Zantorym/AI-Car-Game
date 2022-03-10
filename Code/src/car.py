@@ -42,11 +42,12 @@ class Car(pygame.sprite.Sprite):
         self.acceleration_value = acceleration
         self.max_acceleration = max_acceleration
 
+        self.image = self.sprite.copy()
+        self.rect = self.position - Vector2(self.image.get_size()) * 0.5
+        self.mask = pygame.mask.from_surface(self.image)
+
     def draw(self, surface):
-        rotated_surface = pygame.transform.rotate(self.sprite, self.angle)
-        rotated_surface_size = Vector2(rotated_surface.get_size())
-        blit_position = self.position - rotated_surface_size * 0.5
-        surface.blit(rotated_surface, blit_position)
+        surface.blit(self.image, self.rect)
 
     def update(self, steering, acceleration):
         self.accelerate(acceleration)
@@ -61,6 +62,11 @@ class Car(pygame.sprite.Sprite):
 
         self.position += self.velocity.rotate(-self.angle)
         self.angle += degrees(angular_velocity)
+
+        self.image = pygame.transform.rotate(self.sprite, self.angle)
+        self.rect = self.position - Vector2(self.image.get_size()) * 0.5
+        self.mask = pygame.mask.from_surface(self.image)
+
 
     def steer(self, steering):
         if steering == Steering.LEFT:

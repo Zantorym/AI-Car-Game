@@ -1,5 +1,6 @@
 import cv2
 import math
+from pygame import Color, Vector2
 
 def edge_detect(file_name, tresh_min=128, tresh_max=255):
     """
@@ -85,3 +86,11 @@ class myLine:
     def __init__(self, pt1, pt2):
         self.pt1 = myPoint(pt1.x, pt1.y)
         self.pt2 = myPoint(pt2.x, pt2.y)
+
+def print_text(surface, text, font, color=Color("tomato")):
+    text_surface = font.render(text, True, color)
+
+    rect = text_surface.get_rect()
+    rect.center = Vector2(surface.get_size()) / 2
+
+    surface.blit(text_surface, rect)
