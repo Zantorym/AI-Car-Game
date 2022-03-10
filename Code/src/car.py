@@ -77,10 +77,10 @@ class Car(pygame.sprite.Sprite):
             self.steer_angle = max(self.steer_angle, -self.max_steering)
         else:
             if self.steer_angle > 0.0:
-                self.steer_angle -= self.maneuverability_value * 0.5
+                self.steer_angle -= self.maneuverability_value * c.NATURAL_STEERING_RETURN_MULTIPLIER
                 self.steer_angle = max(self.steer_angle, 0.0)
             elif self.steer_angle < 0.0:
-                self.steer_angle += self.maneuverability_value * 0.5
+                self.steer_angle += self.maneuverability_value * c.NATURAL_STEERING_RETURN_MULTIPLIER
                 self.steer_angle = min(self.steer_angle, 0.0)
     
     def accelerate(self, acceleration):
@@ -89,9 +89,9 @@ class Car(pygame.sprite.Sprite):
         elif acceleration == Acceleration.DECELERATE:
             self.speed -= self.acceleration_value
         else:
-            self.speed -= self.acceleration_value * 0.5
+            self.speed -= self.acceleration_value * c.NATURAL_DECELERATION_MULTIPLIER
         
-        self.speed = max(0, min(self.speed, self.max_acceleration))    
+        self.speed = max(0, min(self.speed, self.max_acceleration))
 
     ################
     # OLD CODE BELOW
