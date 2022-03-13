@@ -1,6 +1,6 @@
 import cv2
 import pygame
-
+import src.Constants as CONSTANTS
 
 class Track(pygame.sprite.Sprite):
 
@@ -13,7 +13,7 @@ class Track(pygame.sprite.Sprite):
         self.contours = self.setContours()
 
         self.image = pygame.image.load(self.track_path).convert_alpha()
-        self.rect = self.image.get_rect(topleft=(0, 100))
+        self.rect = self.image.get_rect(topleft=(0, CONSTANTS.OFFSET))
         self.mask = pygame.mask.from_surface(self.image)
 
     def setContours(self):
