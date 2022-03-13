@@ -1,8 +1,9 @@
 import cv2
 import pygame
+import src.constants as CONSTANTS
+from src.game_state import GameState
 from src.car import Car, Steering, Acceleration
 from src.track import Track
-import src.constants as CONSTANTS
 from src.commonUtils import print_text
 
 import sys
@@ -101,13 +102,17 @@ def update_car(car, keys_pressed):
 
     car.update(steering, acceleration)
 
+car_start_x = CONSTANTS.WIDTH / 2
+car_start_y = CONSTANTS.HEIGHT / 2
+car_start_angle = 45
 
 def main():
     clock = pygame.time.Clock()
     # data = []
 
     track = Track(2)
-    car = Car(CONSTANTS.WIDTH / 2, CONSTANTS.HEIGHT / 2, 45, sprite_path='assets/car.png')
+    car = Car(car_start_x, car_start_y, car_start_angle, sprite_path='assets/car.png')
+    gamestate = GameState(car, track)
 
     all_sprites_group = pygame.sprite.Group()
     all_sprites_group.add(track)
@@ -136,6 +141,8 @@ def main():
         # Handle game functions
         update_car(car, keys_pressed)
         # car.update(keys_pressed)
+        # Update gamestate
+        gamestate.update(car)
                 
         # Rendering
         # display_track_background()
@@ -143,6 +150,7 @@ def main():
         SCREEN.blit(track.image, track.rect)
         car.draw(SCREEN)
         render_controls(SCREEN, keys_pressed)
+        gamestate.draw_rays(SCREEN)
 
         # Collision Detection
         if (pygame.sprite.spritecollide(car, obstacles_group, False, collided=pygame.sprite.collide_mask)):

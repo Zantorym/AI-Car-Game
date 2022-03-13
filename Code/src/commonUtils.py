@@ -94,3 +94,10 @@ def print_text(surface, text, font, color=Color("tomato")):
     rect.center = Vector2(surface.get_size()) / 2
 
     surface.blit(text_surface, rect)
+
+def normalize_angle(angle):
+    while angle > 360:
+        angle -= 360
+    while angle < 0:
+        angle += 360
+    return angle
