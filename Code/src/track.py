@@ -1,6 +1,6 @@
 import cv2
 import pygame
-import src.Constants as CONSTANTS
+import src.constants as CONSTANTS
 
 class Track(pygame.sprite.Sprite):
 

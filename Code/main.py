@@ -2,7 +2,7 @@ import cv2
 import pygame
 from src.car import Car, Steering, Acceleration
 from src.track import Track
-import src.Constants as c
+import src.constants as CONSTANTS
 from src.commonUtils import print_text
 
 import sys
@@ -21,7 +21,7 @@ pygame.init()
 pygame.font.init()
 
 pygame.display.set_caption("Crazy Driver")
-SCREEN = pygame.display.set_mode((c.WIDTH, c.HEIGHT))
+SCREEN = pygame.display.set_mode((CONSTANTS.WIDTH, CONSTANTS.HEIGHT))
 SCREEN.fill((255, 255, 255))
 
 # track_back_image = track.getImage().convert()
@@ -38,8 +38,8 @@ key_strokes = {'w': False, 'a': False, 's': False, 'd': False}
 #     SCREEN.blit(track.image, track.rect)
 
 def show_key_strokes(surface, key_strokes):
-    active = c.D_GREEN
-    default = c.BLACK
+    active = CONSTANTS.D_GREEN
+    default = CONSTANTS.BLACK
     w = active if key_strokes[K_w] else default
     a = active if key_strokes[K_a] else default
     s = active if key_strokes[K_s] else default
@@ -50,10 +50,10 @@ def show_key_strokes(surface, key_strokes):
     # pygame.draw.rect(SCREEN, s_bg, (905, 55, 40, 40), 2)  # S
     # pygame.draw.rect(SCREEN, d_bg, (955, 55, 40, 40), 2)  # D
 
-    SCREEN.blit(c.W_FONT.render(f'W', True, w), dest=(907, 5))  # W
-    SCREEN.blit(c.A_FONT.render(f'A', True, a), dest=(857, 55))  # A
-    SCREEN.blit(c.S_FONT.render(f'S', True, s), dest=(907, 55))  # S
-    SCREEN.blit(c.D_FONT.render(f'D', True, d), dest=(957, 55))  # D
+    SCREEN.blit(CONSTANTS.W_FONT.render(f'W', True, w), dest=(907, 5))  # W
+    SCREEN.blit(CONSTANTS.A_FONT.render(f'A', True, a), dest=(857, 55))  # A
+    SCREEN.blit(CONSTANTS.S_FONT.render(f'S', True, s), dest=(907, 55))  # S
+    SCREEN.blit(CONSTANTS.D_FONT.render(f'D', True, d), dest=(957, 55))  # D
 
 
 def render_controls(surface, key_strokes):
@@ -107,7 +107,7 @@ def main():
     # data = []
 
     track = Track(2)
-    car = Car(c.WIDTH / 2, c.HEIGHT / 2, 45, sprite_path='assets/car.png')
+    car = Car(CONSTANTS.WIDTH / 2, CONSTANTS.HEIGHT / 2, 45, sprite_path='assets/car.png')
 
     all_sprites_group = pygame.sprite.Group()
     all_sprites_group.add(track)
@@ -160,7 +160,7 @@ def main():
         pygame.display.flip()
 
 
-        clock.tick(c.FPS)
+        clock.tick(CONSTANTS.FPS)
 
     pygame.quit()
     sys.exit()

@@ -1,6 +1,6 @@
 from .commonUtils import myPoint, myLine, rotate, distance, rotateRect
 from .ray import Ray
-import src.Constants as c
+import src.constants as CONSTANTS
 from math import sin, radians, degrees
 import pygame
 import cv2
@@ -21,10 +21,10 @@ class Acceleration(Enum):
 
 class Car(pygame.sprite.Sprite):
     def __init__(self, x, y, angle=0.0, sprite_path='assets/car.png',
-                manueverability=c.STEER_MANEURABILITY,
-                max_steering=c.MAX_STEER_ANGLE,
-                acceleration=c.ACCELERATION,
-                max_acceleration=c.MAX_ACCELERATION):
+                manueverability=CONSTANTS.STEER_MANEURABILITY,
+                max_steering=CONSTANTS.MAX_STEER_ANGLE,
+                acceleration=CONSTANTS.ACCELERATION,
+                max_acceleration=CONSTANTS.MAX_ACCELERATION):
         super(Car, self).__init__()
 
         self.position = Vector2((x, y))
@@ -77,10 +77,10 @@ class Car(pygame.sprite.Sprite):
             self.steer_angle = max(self.steer_angle, -self.max_steering)
         else:
             if self.steer_angle > 0.0:
-                self.steer_angle -= self.maneuverability_value * c.NATURAL_STEERING_RETURN_MULTIPLIER
+                self.steer_angle -= self.maneuverability_value * CONSTANTS.NATURAL_STEERING_RETURN_MULTIPLIER
                 self.steer_angle = max(self.steer_angle, 0.0)
             elif self.steer_angle < 0.0:
-                self.steer_angle += self.maneuverability_value * c.NATURAL_STEERING_RETURN_MULTIPLIER
+                self.steer_angle += self.maneuverability_value * CONSTANTS.NATURAL_STEERING_RETURN_MULTIPLIER
                 self.steer_angle = min(self.steer_angle, 0.0)
     
     def accelerate(self, acceleration):
@@ -89,7 +89,7 @@ class Car(pygame.sprite.Sprite):
         elif acceleration == Acceleration.DECELERATE:
             self.speed -= self.acceleration_value
         else:
-            self.speed -= self.acceleration_value * c.NATURAL_DECELERATION_MULTIPLIER
+            self.speed -= self.acceleration_value * CONSTANTS.NATURAL_DECELERATION_MULTIPLIER
         
         self.speed = max(0, min(self.speed, self.max_acceleration))
 
