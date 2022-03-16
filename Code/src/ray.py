@@ -1,6 +1,7 @@
 import pygame
+from src.track import Track
 from pygame import Vector2, Surface
-from src.commonUtils import normalize_angle
+from src.commonUtils import normalize_angle, normalize_vector_endpoint, is_intersecting_color
 from typing import Tuple
 # from .commonUtils import myPoint, rotate
 # import math
@@ -50,6 +51,23 @@ class Ray():
         # No overlap, return the end point of the ray
         endpoint = Vector2(self.start) + self.vector
         return endpoint.x, endpoint.y
+
+    def get_pt_int_w_track(self, track: Track) -> Tuple[int, int]:
+        # Check lenght of 0
+        if is_intersecting_color(track.get_at(normalize_vector_endpoint(self.start))):
+            return normalize_vector_endpoint(self.start)
+
+        for test_len in range(1, self.length):
+            endpoint = self.vector.copy()
+            endpoint.scale_to_length(test_len)
+            endpoint += self.start
+            endpoint = normalize_vector_endpoint(endpoint)
+            if is_intersecting_color(track.get_at(endpoint)):
+                return endpoint
+
+        # default: return max length
+        return normalize_vector_endpoint(self.start + self.vector)
+
 
 ################
 # OLD CODE BELOW

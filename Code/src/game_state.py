@@ -12,6 +12,7 @@ class GameState:
         self.car_position : Vector2 = car.position
         self.car_facing : float = car.angle
         self.distance_travelled : float = 0.0
+        self.track = track
         self.track_mask = track.mask
         self.track_topleft = track.rect.topleft
 
@@ -22,7 +23,8 @@ class GameState:
         for angle in range(0, 181, CONSTANTS.DEGREES_BETWEEN_RAYS):
             ray_angle = normalize_angle(self.car_facing - 90.0 + angle) # starts 90 degrees to the right
             ray = Ray(self.car_position, CONSTANTS.DEFAULT_RAY_LENGHT, ray_angle)
-            ray_end = Vector2(ray.get_pt_int_w_mask(self.track_mask, self.track_topleft))
+            # ray_end = Vector2(ray.get_pt_int_w_mask(self.track_mask, self.track_topleft))
+            ray_end = Vector2(ray.get_pt_int_w_track(self.track))
             length = Vector2(ray_end - self.car_position).length()
             rays.append((self.car_position, ray_end, length))
         self.rays = rays

@@ -1,5 +1,6 @@
 import cv2
 import math
+from typing import Tuple
 from pygame import Color, Vector2
 
 def edge_detect(file_name, tresh_min=128, tresh_max=255):
@@ -101,3 +102,11 @@ def normalize_angle(angle):
     while angle < 0:
         angle += 360
     return angle
+
+def normalize_vector_endpoint(endpoint: Vector2) -> Tuple[int, int]:
+    return (round(endpoint.x), round(endpoint.y))
+
+def is_intersecting_color(track_color: Color) -> bool:
+    if not track_color:
+        return False
+    return track_color[3] == 255
