@@ -1,4 +1,3 @@
-import cv2
 import pygame
 import src.constants as CONSTANTS
 from src.game_state import GameState
@@ -25,18 +24,12 @@ pygame.display.set_caption("Crazy Driver")
 SCREEN = pygame.display.set_mode((CONSTANTS.WIDTH, CONSTANTS.HEIGHT))
 SCREEN.fill((255, 255, 255))
 
-# track_back_image = track.getImage().convert()
-# track_back_rect = track_back_image.get_rect().move(0, c.OFFSET))
-
 action_space = None
 observation_space = None
 game_reward = 0
 score = 0
 
 key_strokes = {'w': False, 'a': False, 's': False, 'd': False}
-
-# def display_track_background():
-#     SCREEN.blit(track.image, track.rect)
 
 def show_key_strokes(surface, key_strokes):
     active = CONSTANTS.D_GREEN
@@ -98,7 +91,7 @@ def update_car(car, keys_pressed):
     if keys_pressed[pygame.K_w] and not keys_pressed[pygame.K_s]:
         acceleration = Acceleration.ACCELERATE
     elif keys_pressed[pygame.K_s] and not keys_pressed[pygame.K_w]:
-        acceleration = Acceleration.DECELERATE
+        acceleration = Acceleration.BRAKE
 
     car.update(steering, acceleration)
 
@@ -110,7 +103,7 @@ def main():
     clock = pygame.time.Clock()
     # data = []
 
-    track = Track(2)
+    track = Track()
     car = Car(car_start_x, car_start_y, car_start_angle, sprite_path='assets/car.png')
     gamestate = GameState(car, track)
 
@@ -124,6 +117,7 @@ def main():
 
     running = True
     while running:
+        mouse_down = False
         for event in pygame.event.get():
             # Check for KEYDOWN event
             if event.type == KEYDOWN:
@@ -135,6 +129,9 @@ def main():
             elif event.type == QUIT:
                 running = False
 
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_down = True
+
         # Checking user event
         keys_pressed = pygame.key.get_pressed()
 
@@ -143,6 +140,14 @@ def main():
         # car.update(keys_pressed)
         # Update gamestate
         gamestate.update(car)
+
+        # Handle mouse
+        if mouse_down:
+            mouse_x, mouse_y = pygame.mouse.get_pos()
+            print((mouse_x, mouse_y))
+            surf_color = track.get_at((mouse_x, mouse_y))
+            if surf_color:
+                print(surf_color)
                 
         # Rendering
         # display_track_background()

@@ -1,9 +1,8 @@
-from typing import Tuple
-from pygame import Surface, Vector2
 import pygame
+import src.constants as CONSTANTS
+from pygame import Surface, Vector2
 from src.track import Track
 from src.car import Car
-import src.constants as CONSTANTS
 from src.ray import Ray
 from src.commonUtils import normalize_angle
 
