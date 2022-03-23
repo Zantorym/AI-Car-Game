@@ -21,7 +21,7 @@ class Track(pygame.sprite.Sprite):
     def get_at(self, abs_pt: Tuple[int, int]) -> pygame.Color:
         off_x = abs_pt[0] - self.rect.topleft[0]
         off_y = abs_pt[1] - self.rect.topleft[1]
-        if 0 <= off_x <= self.rect.width and 0 <= off_y <= self.rect.height:
+        if 0 <= off_x < self.rect.width and 0 <= off_y < self.rect.height:
             return self.image.get_at((off_x, off_y))
         else:
             return None
