@@ -139,7 +139,7 @@ def main():
         update_car(car, keys_pressed)
         # car.update(keys_pressed)
         # Update gamestate
-        gamestate.update(car)
+        gamestate.update(car, keys_pressed)
 
         # Handle mouse
         if mouse_down:
@@ -172,6 +172,8 @@ def main():
         # Update Screen
         pygame.display.flip()
 
+        # Convert gamestate to a numpy array
+        gamestate.to_numpy()
 
         clock.tick(CONSTANTS.FPS)
 
