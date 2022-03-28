@@ -1,12 +1,12 @@
+import sys
 import pygame
 import src.constants as CONSTANTS
+from enum import Enum
 from src.game_state import GameState
 from src.car import Car, Steering, Acceleration
 from src.track import Track
+from src.goal import Goal
 from src.commonUtils import print_text
-
-import sys
-
 from pygame.locals import (
     K_w,
     K_a,
@@ -16,6 +16,13 @@ from pygame.locals import (
     QUIT,
     K_ESCAPE,
 )
+
+
+class GameStatus(Enum):
+    ONGOING = 0
+    GAME_OVER = 1
+    WIN = 2
+    
 
 pygame.init()
 pygame.font.init()
@@ -33,50 +40,32 @@ key_strokes = {'w': False, 'a': False, 's': False, 'd': False}
 
 def show_key_strokes(surface, key_strokes):
     active = CONSTANTS.D_GREEN
-    default = CONSTANTS.BLACK
+    default = CONSTANTS.GREY
     w = active if key_strokes[K_w] else default
     a = active if key_strokes[K_a] else default
     s = active if key_strokes[K_s] else default
     d = active if key_strokes[K_d] else default
 
-    # pygame.draw.rect(SCREEN, w_bg, (905, 5, 40, 40), 2)  # W
-    # pygame.draw.rect(SCREEN, a_bg, (855, 55, 40, 40), 2)  # A
-    # pygame.draw.rect(SCREEN, s_bg, (905, 55, 40, 40), 2)  # S
-    # pygame.draw.rect(SCREEN, d_bg, (955, 55, 40, 40), 2)  # D
+    pygame.draw.rect(surface, w, (55, 7, 40, 40))
+    pygame.draw.rect(surface, a, (5, 53, 40, 40))
+    pygame.draw.rect(surface, s, (55, 53, 40, 40))
+    pygame.draw.rect(surface, d, (105, 53, 40, 40))
 
-    SCREEN.blit(CONSTANTS.W_FONT.render(f'W', True, w), dest=(907, 5))  # W
-    SCREEN.blit(CONSTANTS.A_FONT.render(f'A', True, a), dest=(857, 55))  # A
-    SCREEN.blit(CONSTANTS.S_FONT.render(f'S', True, s), dest=(907, 55))  # S
-    SCREEN.blit(CONSTANTS.D_FONT.render(f'D', True, d), dest=(957, 55))  # D
+    surface.blit(CONSTANTS.W_FONT.render(f'W', True, CONSTANTS.BLACK), dest=(65, 18))  # W
+    surface.blit(CONSTANTS.A_FONT.render(f'A', True, CONSTANTS.BLACK), dest=(17, 62))  # A
+    surface.blit(CONSTANTS.S_FONT.render(f'S', True, CONSTANTS.BLACK), dest=(67, 62))  # S
+    surface.blit(CONSTANTS.D_FONT.render(f'D', True, CONSTANTS.BLACK), dest=(117, 62))  # D
 
 
 def render_controls(surface, key_strokes):
-    # screen.fill(tuple(c.BLACK))
-    # screen.blit(back_image, back_rect)
-
-    # # TODO: Update car pos
-    # car.update()
-    # car.draw(screen)
-
-    # if action == 1:
-    #     pygame.draw.rect(screen, (0, 255, 0), (850, 50, 40, 40))
-    # if action == 2:
-    #     pygame.draw.rect(screen, (0, 255, 0), (800, 100, 40, 40))
-    # if action == 3:
-    #     pygame.draw.rect(screen, (0, 255, 0), (850, 100, 40, 40))
-    # if action == 4:
-    #     pygame.draw.rect(screen, (0, 255, 0), (900, 100, 40, 40))
-
-    # Key-strokes info
+    # Display visual indicator of keys pressed state
     show_key_strokes(surface, key_strokes)
 
-    # # score
-    # text_surface = c.POINTS_FONT.render(f'Points {car.points}', True, pygame.Color('green'))
-    # screen.blit(text_surface, dest=(0, 0))
-    # # speed
-    # text_surface = c.SPEED_FONT.render(f'Speed {car.vel * -1}', True, pygame.Color('green'))
-    # screen.blit(text_surface, dest=(420, 0))
-
+    # Display boxes as borders for keys
+    pygame.draw.rect(surface, CONSTANTS.BLACK, (55, 7, 40, 40), 2)  # W
+    pygame.draw.rect(surface, CONSTANTS.BLACK, (5, 53, 40, 40), 2)  # A
+    pygame.draw.rect(surface, CONSTANTS.BLACK, (55, 53, 40, 40), 2)  # S
+    pygame.draw.rect(surface, CONSTANTS.BLACK, (105, 53, 40, 40), 2)  # D
 
 
 def update_car(car, keys_pressed):
@@ -94,16 +83,27 @@ def update_car(car, keys_pressed):
         acceleration = Acceleration.BRAKE
 
     car.update(steering, acceleration)
-
-car_start_x = CONSTANTS.WIDTH / 2
-car_start_y = CONSTANTS.HEIGHT / 2
-car_start_angle = 45
+    
 
 def main():
     clock = pygame.time.Clock()
-    # data = []
 
-    track = Track()
+    current_game_status = GameStatus.ONGOING
+
+    track_num = 0
+
+    # Setting the car starting position for the track
+    game_start_position = CONSTANTS.GAME_START_POSITIONS[int(track_num)]
+    car_start_x = game_start_position['car_start_pos'][0]
+    car_start_y = game_start_position['car_start_pos'][1]
+    car_start_angle = game_start_position['car_start_angle']
+    # Setting the goal position for the track
+    goal_dimension = game_start_position['goal_dimension']
+    goal_center = game_start_position['goal_center_pos']
+    goal_rotation = game_start_position['goal_rotation_deg']
+
+    track = Track(track_num)
+    goal = Goal(goal_dimension, goal_center, goal_rotation)
     car = Car(car_start_x, car_start_y, car_start_angle, sprite_path='assets/car.png')
     gamestate = GameState(car, track)
 
@@ -112,6 +112,8 @@ def main():
     all_sprites_group.add(car)
     obstacles_group = pygame.sprite.Group()
     obstacles_group.add(track)
+    goal_group = pygame.sprite.Group()
+    goal_group.add(goal)
     car_group = pygame.sprite.GroupSingle()
     car_group.add(car)
 
@@ -132,106 +134,67 @@ def main():
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_down = True
 
-        # Checking user event
-        keys_pressed = pygame.key.get_pressed()
+            # Checking user event
+            keys_pressed = pygame.key.get_pressed()
 
-        # Handle game functions
-        update_car(car, keys_pressed)
-        # car.update(keys_pressed)
-        # Update gamestate
-        gamestate.update(car, keys_pressed)
+        # Only update car and game status if not yet game over
+        if (not (current_game_status == GameStatus.GAME_OVER and CONSTANTS.STOP_GAME_ON_GAMEOVER)) and \
+                (not (current_game_status == GameStatus.WIN and CONSTANTS.STOP_GAME_ON_WIN)):
+            # Handle game functions
+            update_car(car, keys_pressed)
+            # Update gamestate
+            gamestate.update(car, keys_pressed)
 
-        # Handle mouse
-        if mouse_down:
-            mouse_x, mouse_y = pygame.mouse.get_pos()
-            print((mouse_x, mouse_y))
-            surf_color = track.get_at((mouse_x, mouse_y))
-            if surf_color:
-                print(surf_color)
-                
-        # Rendering
-        # display_track_background()
-        SCREEN.fill((255, 255, 255))
-        SCREEN.blit(track.image, track.rect)
-        car.draw(SCREEN)
-        render_controls(SCREEN, keys_pressed)
-        gamestate.draw_rays(SCREEN)
+            # Handle mouse
+            if mouse_down:
+                mouse_x, mouse_y = pygame.mouse.get_pos()
+                print((mouse_x, mouse_y))
+                surf_color = track.get_at((mouse_x, mouse_y))
+                if surf_color:
+                    print(surf_color)
+                    
+            # Rendering
+            SCREEN.fill((255, 255, 255))
+            SCREEN.blit(track.image, track.rect)
+            SCREEN.blit(goal.image, goal.rect)
+            car.draw(SCREEN)
+            # Create surface for controls display
+            controls_surface = pygame.Surface((200, 100), pygame.SRCALPHA)
+            render_controls(controls_surface, keys_pressed)
+            SCREEN.blit(controls_surface, (900, 0))
+            # Draw rays on screen
+            gamestate.draw_rays(SCREEN)
+            
+            # Collision Detection
+            if (pygame.sprite.spritecollide(car, obstacles_group, False, collided=pygame.sprite.collide_mask)):
+                # returned list is not empty
+                current_game_status = GameStatus.GAME_OVER
+                gamestate.set_obstacle_hit(True)
+                gamestate.set_finish_line_reached(False)
+            elif (pygame.sprite.spritecollide(car, goal_group, False, collided=pygame.sprite.collide_mask)):
+                current_game_status = GameStatus.WIN
+                gamestate.set_obstacle_hit(False)
+                gamestate.set_finish_line_reached(True)
+            else:
+                current_game_status = GameStatus.ONGOING
+                gamestate.set_obstacle_hit(False)
+                gamestate.set_finish_line_reached(False)
 
-        # Collision Detection
-        if (pygame.sprite.spritecollide(car, obstacles_group, False, collided=pygame.sprite.collide_mask)):
-            # returned list is not empty
-            collision_detected = True
-        else:
-            collision_detected = False
+            if (current_game_status == GameStatus.GAME_OVER):
+                print_text(SCREEN, 'GAME OVER', pygame.font.Font(None, 128))
+            elif (current_game_status == GameStatus.WIN):
+                print_text(SCREEN, 'GOAL', pygame.font.Font(None, 128))
 
-        if (collision_detected):
-            print_text(SCREEN, 'COLLISSION', pygame.font.Font(None, 64))
-        else:
-            print_text(SCREEN, 'NO', pygame.font.Font(None, 64))
+            # Update Screen
+            pygame.display.flip()
 
-        # Update Screen
-        pygame.display.flip()
-
-        # Convert gamestate to a numpy array
-        gamestate.to_numpy()
+            # Convert gamestate to a numpy array
+            gamestate.to_numpy()
 
         clock.tick(CONSTANTS.FPS)
 
     pygame.quit()
     sys.exit()
-
-    # while True:
-    #     clock.tick(c.FPS)
-    #     for event in pygame.event.get():
-
-    #         # Exiting the game
-    #         if event.type == pygame.QUIT:
-    #             pygame.quit()
-    #             sys.exit()
-
-    #         if event.type == c.COLLISION_EVENT:
-    #             # TODO: action to be done on collision
-    #             # car.respawn()
-    #             pygame.quit()
-    #             sys.exit()
-
-    #         # Checking user event
-    #         keys_pressed = pygame.key.get_pressed()
-    #         actions = []
-    #         action = 0
-    #         if keys_pressed[pygame.K_w]:
-    #             # Increase speed
-    #             action = 1
-    #         if keys_pressed[pygame.K_a]:
-    #             # Turn left
-    #             action = 2
-    #         if keys_pressed[pygame.K_s]:
-    #             # Decrease Speed
-    #             action = 3
-    #         if keys_pressed[pygame.K_d]:
-    #             # Turn right
-    #             action = 4
-    #         # TODO: do we want to implement a mechanism for constant speed without a key press
-    #         car.action(action)
-    #         actions.append(action)
-
-    #         # Store the user data for imitation learning
-    #         # wall_distance = car.get_wall_distance()
-    #         # data.append([wall_distance, actions])
-
-    #         # if event.type == env.terminate_run:
-    #         #     env.return_to_home()
-
-    #     key_strokes = {
-    #         'w': keys_pressed[pygame.K_w],
-    #         'a': keys_pressed[pygame.K_a],
-    #         's': keys_pressed[pygame.K_s],
-    #         'd': keys_pressed[pygame.K_d]
-    #     }
-
-    #     car.check_collision(track.getContours())
-    #     render(car, action, SCREEN, key_strokes)
-    #     pygame.display.update()
 
 
 if __name__ == '__main__':
