@@ -18,7 +18,9 @@ A_FONT = pygame.font.SysFont('comicsans', 32)
 S_FONT = pygame.font.SysFont('comicsans', 32)
 D_FONT = pygame.font.SysFont('comicsans', 32)
 
+# Game related constants
 COLLISION_EVENT = pygame.USEREVENT + 1
+STOP_GAME_ON_GAMEOVER: bool = True
 
 # Car related default values
 STEER_MANEURABILITY = 5
@@ -33,6 +35,7 @@ DEGREES_BETWEEN_RAYS=15
 DEFAULT_RAY_LENGHT=300
 RAY_DRAW_COLOR=pygame.Color(255, 0, 0)
 
+# Car starting positions per track
 GAME_START_POSITIONS = [
     {
         'car_start_pos': (500, 809),

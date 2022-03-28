@@ -24,6 +24,9 @@ class GameState:
         self.s_pressed = 0
         self.d_pressed = 0
 
+        self.obstacle_hit = 0
+        self.finish_line_reached = 0
+
         self.update_rays()
 
     def update_keys_pressed(self, keys_pressed: any):
@@ -64,7 +67,16 @@ class GameState:
 
     def to_numpy(self):
         ray_lengths = numpy.array([ray[2] for ray in self.rays])
-        np = numpy.array([self.w_pressed, self.a_pressed, self.s_pressed, self.d_pressed,
-                          self.car_speed, self.car_steer_angle,
-                          *ray_lengths])
+        np = numpy.array([
+            self.w_pressed, self.a_pressed, self.s_pressed, self.d_pressed,
+            self.car_speed, self.car_steer_angle,
+            *ray_lengths,
+            self.obstacle_hit, self.finish_line_reached,
+        ])
         return np
+
+    def set_obstacle_hit(self, val: bool):
+        self.obstacle_hit = 1 if val else 0
+
+    def set_finish_line_reached(self, val: bool):
+        self.finish_line_reached = 1 if val else 0

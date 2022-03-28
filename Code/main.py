@@ -1,6 +1,7 @@
 import sys
 import pygame
 import src.constants as CONSTANTS
+from enum import Enum
 from src.game_state import GameState
 from src.car import Car, Steering, Acceleration
 from src.track import Track
@@ -14,6 +15,13 @@ from pygame.locals import (
     QUIT,
     K_ESCAPE,
 )
+
+
+class GameStatus(Enum):
+    ONGOING = 0
+    GAME_OVER = 1
+    WIN = 2
+    
 
 pygame.init()
 pygame.font.init()
@@ -74,18 +82,19 @@ def update_car(car, keys_pressed):
         acceleration = Acceleration.BRAKE
 
     car.update(steering, acceleration)
-
-
-track_num = 2
-
-game_start_position = CONSTANTS.GAME_START_POSITIONS[int(track_num)]
-car_start_x = game_start_position['car_start_pos'][0]
-car_start_y = game_start_position['car_start_pos'][1]
-car_start_angle = game_start_position['car_start_angle']
+    
 
 def main():
     clock = pygame.time.Clock()
-    # data = []
+
+    current_game_status = GameStatus.ONGOING
+
+    track_num = 2
+
+    game_start_position = CONSTANTS.GAME_START_POSITIONS[int(track_num)]
+    car_start_x = game_start_position['car_start_pos'][0]
+    car_start_y = game_start_position['car_start_pos'][1]
+    car_start_angle = game_start_position['car_start_angle']
 
     track = Track(track_num)
     car = Car(car_start_x, car_start_y, car_start_angle, sprite_path='assets/car.png')
@@ -116,52 +125,54 @@ def main():
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_down = True
 
-        # Checking user event
-        keys_pressed = pygame.key.get_pressed()
+            # Checking user event
+            keys_pressed = pygame.key.get_pressed()
 
-        # Handle game functions
-        update_car(car, keys_pressed)
-        # car.update(keys_pressed)
-        # Update gamestate
-        gamestate.update(car, keys_pressed)
+        # Only update car and game status if not yet game over
+        if current_game_status != GameStatus.GAME_OVER and CONSTANTS.STOP_GAME_ON_GAMEOVER:
+            # Handle game functions
+            update_car(car, keys_pressed)
+            # car.update(keys_pressed)
+            # Update gamestate
+            gamestate.update(car, keys_pressed)
 
-        # Handle mouse
-        if mouse_down:
-            mouse_x, mouse_y = pygame.mouse.get_pos()
-            print((mouse_x, mouse_y))
-            surf_color = track.get_at((mouse_x, mouse_y))
-            if surf_color:
-                print(surf_color)
-                
-        # Rendering
-        # display_track_background()
-        SCREEN.fill((255, 255, 255))
-        SCREEN.blit(track.image, track.rect)
-        car.draw(SCREEN)
-        # Create surface for controls display
-        controls_surface = pygame.Surface((200, 100), pygame.SRCALPHA)
-        render_controls(controls_surface, keys_pressed)
-        SCREEN.blit(controls_surface, (900, 0))
-        # Draw rays on screen
-        gamestate.draw_rays(SCREEN)
+            # Handle mouse
+            if mouse_down:
+                mouse_x, mouse_y = pygame.mouse.get_pos()
+                print((mouse_x, mouse_y))
+                surf_color = track.get_at((mouse_x, mouse_y))
+                if surf_color:
+                    print(surf_color)
+                    
+            # Rendering
+            # display_track_background()
+            SCREEN.fill((255, 255, 255))
+            SCREEN.blit(track.image, track.rect)
+            car.draw(SCREEN)
+            # Create surface for controls display
+            controls_surface = pygame.Surface((200, 100), pygame.SRCALPHA)
+            render_controls(controls_surface, keys_pressed)
+            SCREEN.blit(controls_surface, (900, 0))
+            # Draw rays on screen
+            gamestate.draw_rays(SCREEN)
+            
+            # Collision Detection
+            if (pygame.sprite.spritecollide(car, obstacles_group, False, collided=pygame.sprite.collide_mask)):
+                # returned list is not empty
+                current_game_status = GameStatus.GAME_OVER
+                gamestate.set_obstacle_hit(True)
+            else:
+                current_game_status = GameStatus.ONGOING
+                gamestate.set_obstacle_hit(False)
 
-        # Collision Detection
-        if (pygame.sprite.spritecollide(car, obstacles_group, False, collided=pygame.sprite.collide_mask)):
-            # returned list is not empty
-            collision_detected = True
-        else:
-            collision_detected = False
+            if (current_game_status == GameStatus.GAME_OVER):
+                print_text(SCREEN, 'GAME OVER', pygame.font.Font(None, 128))
 
-        if (collision_detected):
-            print_text(SCREEN, 'COLLISSION', pygame.font.Font(None, 64))
-        else:
-            print_text(SCREEN, 'NO', pygame.font.Font(None, 64))
+            # Update Screen
+            pygame.display.flip()
 
-        # Update Screen
-        pygame.display.flip()
-
-        # Convert gamestate to a numpy array
-        gamestate.to_numpy()
+            # Convert gamestate to a numpy array
+            gamestate.to_numpy()
 
         clock.tick(CONSTANTS.FPS)
 
