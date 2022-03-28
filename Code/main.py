@@ -174,11 +174,11 @@ def main():
             elif (pygame.sprite.spritecollide(car, goal_group, False, collided=pygame.sprite.collide_mask)):
                 current_game_status = GameStatus.WIN
                 gamestate.set_obstacle_hit(False)
-                gamestate.set_obstacle_hit(True)
+                gamestate.set_finish_line_reached(True)
             else:
                 current_game_status = GameStatus.ONGOING
                 gamestate.set_obstacle_hit(False)
-                gamestate.set_obstacle_hit(False)
+                gamestate.set_finish_line_reached(False)
 
             if (current_game_status == GameStatus.GAME_OVER):
                 print_text(SCREEN, 'GAME OVER', pygame.font.Font(None, 128))
