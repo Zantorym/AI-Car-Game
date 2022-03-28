@@ -8,7 +8,7 @@ HEIGHT = 900
 OFFSET = 100
 GREY = pygame.Color(128,128,128)
 BLACK = pygame.Color(0,0,0)
-L_GREEN = pygame.Color(0, 220, 0)
+L_GREEN = pygame.Color(0, 220, 0, 255)
 D_GREEN = pygame.Color(0,80,0)
 
 SPEED_FONT = pygame.font.SysFont('comicsans', 50)
@@ -21,6 +21,7 @@ D_FONT = pygame.font.SysFont('comicsans', 32)
 # Game related constants
 COLLISION_EVENT = pygame.USEREVENT + 1
 STOP_GAME_ON_GAMEOVER: bool = True
+STOP_GAME_ON_WIN: bool = True
 
 # Car related default values
 STEER_MANEURABILITY = 5
@@ -39,14 +40,23 @@ RAY_DRAW_COLOR=pygame.Color(255, 0, 0)
 GAME_START_POSITIONS = [
     {
         'car_start_pos': (500, 809),
-        'car_start_angle': 0
+        'car_start_angle': 0,
+        'goal_dimension': (10, 105),
+        'goal_center_pos': (480, 808),
+        'goal_rotation_deg' : 0,
     },
     {
         'car_start_pos': (280, 317),
-        'car_start_angle': 10
+        'car_start_angle': 10,
+        'goal_dimension': (10, 100),
+        'goal_center_pos': (260, 320),
+        'goal_rotation_deg' : 10,
     },
     {
         'car_start_pos': (235, 770),
-        'car_start_angle': 0
+        'car_start_angle': 0,
+        'goal_dimension': (10, 75),
+        'goal_center_pos': (215, 771),
+        'goal_rotation_deg' : 0,
     },
 ]

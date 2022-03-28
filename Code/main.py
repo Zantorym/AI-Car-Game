@@ -5,6 +5,7 @@ from enum import Enum
 from src.game_state import GameState
 from src.car import Car, Steering, Acceleration
 from src.track import Track
+from src.goal import Goal
 from src.commonUtils import print_text
 from pygame.locals import (
     K_w,
@@ -89,14 +90,20 @@ def main():
 
     current_game_status = GameStatus.ONGOING
 
-    track_num = 2
+    track_num = 0
 
+    # Setting the car starting position for the track
     game_start_position = CONSTANTS.GAME_START_POSITIONS[int(track_num)]
     car_start_x = game_start_position['car_start_pos'][0]
     car_start_y = game_start_position['car_start_pos'][1]
     car_start_angle = game_start_position['car_start_angle']
+    # Setting the goal position for the track
+    goal_dimension = game_start_position['goal_dimension']
+    goal_center = game_start_position['goal_center_pos']
+    goal_rotation = game_start_position['goal_rotation_deg']
 
     track = Track(track_num)
+    goal = Goal(goal_dimension, goal_center, goal_rotation)
     car = Car(car_start_x, car_start_y, car_start_angle, sprite_path='assets/car.png')
     gamestate = GameState(car, track)
 
@@ -105,6 +112,8 @@ def main():
     all_sprites_group.add(car)
     obstacles_group = pygame.sprite.Group()
     obstacles_group.add(track)
+    goal_group = pygame.sprite.Group()
+    goal_group.add(goal)
     car_group = pygame.sprite.GroupSingle()
     car_group.add(car)
 
@@ -129,10 +138,10 @@ def main():
             keys_pressed = pygame.key.get_pressed()
 
         # Only update car and game status if not yet game over
-        if current_game_status != GameStatus.GAME_OVER and CONSTANTS.STOP_GAME_ON_GAMEOVER:
+        if (not (current_game_status == GameStatus.GAME_OVER and CONSTANTS.STOP_GAME_ON_GAMEOVER)) and \
+                (not (current_game_status == GameStatus.WIN and CONSTANTS.STOP_GAME_ON_WIN)):
             # Handle game functions
             update_car(car, keys_pressed)
-            # car.update(keys_pressed)
             # Update gamestate
             gamestate.update(car, keys_pressed)
 
@@ -145,9 +154,9 @@ def main():
                     print(surf_color)
                     
             # Rendering
-            # display_track_background()
             SCREEN.fill((255, 255, 255))
             SCREEN.blit(track.image, track.rect)
+            SCREEN.blit(goal.image, goal.rect)
             car.draw(SCREEN)
             # Create surface for controls display
             controls_surface = pygame.Surface((200, 100), pygame.SRCALPHA)
@@ -161,12 +170,20 @@ def main():
                 # returned list is not empty
                 current_game_status = GameStatus.GAME_OVER
                 gamestate.set_obstacle_hit(True)
+                gamestate.set_finish_line_reached(False)
+            elif (pygame.sprite.spritecollide(car, goal_group, False, collided=pygame.sprite.collide_mask)):
+                current_game_status = GameStatus.WIN
+                gamestate.set_obstacle_hit(False)
+                gamestate.set_obstacle_hit(True)
             else:
                 current_game_status = GameStatus.ONGOING
+                gamestate.set_obstacle_hit(False)
                 gamestate.set_obstacle_hit(False)
 
             if (current_game_status == GameStatus.GAME_OVER):
                 print_text(SCREEN, 'GAME OVER', pygame.font.Font(None, 128))
+            elif (current_game_status == GameStatus.WIN):
+                print_text(SCREEN, 'GOAL', pygame.font.Font(None, 128))
 
             # Update Screen
             pygame.display.flip()
