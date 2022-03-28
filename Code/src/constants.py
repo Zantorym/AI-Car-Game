@@ -32,3 +32,18 @@ NATURAL_STEERING_RETURN_MULTIPLIER = 0.5
 DEGREES_BETWEEN_RAYS=15
 DEFAULT_RAY_LENGHT=300
 RAY_DRAW_COLOR=pygame.Color(255, 0, 0)
+
+GAME_START_POSITIONS = [
+    {
+        'car_start_pos': (500, 809),
+        'car_start_angle': 0
+    },
+    {
+        'car_start_pos': (280, 317),
+        'car_start_angle': 10
+    },
+    {
+        'car_start_pos': (235, 770),
+        'car_start_angle': 0
+    },
+]

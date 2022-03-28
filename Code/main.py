@@ -95,15 +95,18 @@ def update_car(car, keys_pressed):
 
     car.update(steering, acceleration)
 
-car_start_x = CONSTANTS.WIDTH / 2
-car_start_y = CONSTANTS.HEIGHT / 2
-car_start_angle = 45
+track_num = 2
+
+game_start_position = CONSTANTS.GAME_START_POSITIONS[int(track_num)]
+car_start_x = game_start_position['car_start_pos'][0]
+car_start_y = game_start_position['car_start_pos'][1]
+car_start_angle = game_start_position['car_start_angle']
 
 def main():
     clock = pygame.time.Clock()
     # data = []
 
-    track = Track()
+    track = Track(track_num)
     car = Car(car_start_x, car_start_y, car_start_angle, sprite_path='assets/car.png')
     gamestate = GameState(car, track)
 
