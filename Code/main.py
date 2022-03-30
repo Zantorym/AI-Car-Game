@@ -85,12 +85,12 @@ def update_car(car, keys_pressed):
     car.update(steering, acceleration)
     
 
-def main():
+def main(num):
     clock = pygame.time.Clock()
 
     current_game_status = GameStatus.ONGOING
 
-    track_num = 0
+    track_num = num
 
     # Setting the car starting position for the track
     game_start_position = CONSTANTS.GAME_START_POSITIONS[int(track_num)]
@@ -197,5 +197,5 @@ def main():
     sys.exit()
 
 
-if __name__ == '__main__':
-    main()
+# if __name__ == '__main__':
+#     main()
