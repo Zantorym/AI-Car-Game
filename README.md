@@ -18,4 +18,5 @@ We're currently in the final phases of implementing a main menu from which a use
 
 
 
-![Demo](https://user-images.githubusercontent.com/35334286/160733035-08262342-eb2b-4402-90cf-818b517bcf4d.gif)
+
+![Demo](https://user-images.githubusercontent.com/35334286/160733311-7b941672-86aa-42f0-885b-fae2bd245e26.gif)
