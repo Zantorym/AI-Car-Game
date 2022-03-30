@@ -17,4 +17,5 @@ We have a functioning game where the user can control a car's speed and directio
 We're currently in the final phases of implementing a main menu from which a user can change maps and add obstacles. We are also working on integrating Imitation Learning to the project, such that an AI learns to play the game based on a trial run provided by the user.
 
 
-![Demo](https://user-images.githubusercontent.com/35334286/160731510-cb481f4d-fd97-4d19-9e31-63eb43b77ab0.gif)
+
+![Demo](https://user-images.githubusercontent.com/35334286/160733035-08262342-eb2b-4402-90cf-818b517bcf4d.gif)
