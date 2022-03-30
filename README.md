@@ -1,5 +1,7 @@
 # AI-Car-Game
 
+Check out our [website](http://aidi-2005-ai-car-game.s3-website.ca-central-1.amazonaws.com/)!
+
 ## Team Members
 - Terence Yu
 - Sarvang Konnur
