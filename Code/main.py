@@ -1,5 +1,6 @@
 import sys
 import pygame
+import numpy as np
 import src.constants as CONSTANTS
 from enum import Enum
 from src.game_state import GameState
@@ -22,7 +23,7 @@ class GameStatus(Enum):
     ONGOING = 0
     GAME_OVER = 1
     WIN = 2
-    
+
 
 pygame.init()
 pygame.font.init()
@@ -38,6 +39,7 @@ score = 0
 
 key_strokes = {'w': False, 'a': False, 's': False, 'd': False}
 
+
 def show_key_strokes(surface, key_strokes):
     active = CONSTANTS.D_GREEN
     default = CONSTANTS.GREY
@@ -51,10 +53,14 @@ def show_key_strokes(surface, key_strokes):
     pygame.draw.rect(surface, s, (55, 53, 40, 40))
     pygame.draw.rect(surface, d, (105, 53, 40, 40))
 
-    surface.blit(CONSTANTS.W_FONT.render(f'W', True, CONSTANTS.BLACK), dest=(65, 18))  # W
-    surface.blit(CONSTANTS.A_FONT.render(f'A', True, CONSTANTS.BLACK), dest=(17, 62))  # A
-    surface.blit(CONSTANTS.S_FONT.render(f'S', True, CONSTANTS.BLACK), dest=(67, 62))  # S
-    surface.blit(CONSTANTS.D_FONT.render(f'D', True, CONSTANTS.BLACK), dest=(117, 62))  # D
+    surface.blit(CONSTANTS.W_FONT.render(
+        f'W', True, CONSTANTS.BLACK), dest=(65, 18))  # W
+    surface.blit(CONSTANTS.A_FONT.render(
+        f'A', True, CONSTANTS.BLACK), dest=(17, 62))  # A
+    surface.blit(CONSTANTS.S_FONT.render(
+        f'S', True, CONSTANTS.BLACK), dest=(67, 62))  # S
+    surface.blit(CONSTANTS.D_FONT.render(
+        f'D', True, CONSTANTS.BLACK), dest=(117, 62))  # D
 
 
 def render_controls(surface, key_strokes):
@@ -83,7 +89,13 @@ def update_car(car, keys_pressed):
         acceleration = Acceleration.BRAKE
 
     car.update(steering, acceleration)
-    
+
+
+def save_gamestates_to_csv(gamestates: np.ndarray, suffix: str):
+    if gamestates is not None:
+        np.savetxt(CONSTANTS.GAMESTATE_SAVE_FILENAME_FORMAT.format(
+            suffix), gamestates, fmt='%10.5f', delimiter=',')
+
 
 def main(num):
     clock = pygame.time.Clock()
@@ -104,8 +116,11 @@ def main(num):
 
     track = Track(track_num)
     goal = Goal(goal_dimension, goal_center, goal_rotation)
-    car = Car(car_start_x, car_start_y, car_start_angle, sprite_path='assets/car.png')
+    car = Car(car_start_x, car_start_y, car_start_angle,
+              sprite_path='assets/car.png')
     gamestate = GameState(car, track)
+    if (CONSTANTS.SAVE_GAMESTATE_TO_FILE):
+        gamestates_np = None
 
     all_sprites_group = pygame.sprite.Group()
     all_sprites_group.add(track)
@@ -152,7 +167,7 @@ def main(num):
                 surf_color = track.get_at((mouse_x, mouse_y))
                 if surf_color:
                     print(surf_color)
-                    
+
             # Rendering
             SCREEN.fill((255, 255, 255))
             SCREEN.blit(track.image, track.rect)
@@ -164,7 +179,7 @@ def main(num):
             SCREEN.blit(controls_surface, (900, 0))
             # Draw rays on screen
             gamestate.draw_rays(SCREEN)
-            
+
             # Collision Detection
             if (pygame.sprite.spritecollide(car, obstacles_group, False, collided=pygame.sprite.collide_mask)):
                 # returned list is not empty
@@ -180,6 +195,17 @@ def main(num):
                 gamestate.set_obstacle_hit(False)
                 gamestate.set_finish_line_reached(False)
 
+            # Save gamestate to a numpy array
+            if (CONSTANTS.SAVE_GAMESTATE_TO_FILE):
+                if gamestates_np is None:
+                    gamestates_np = [gamestate.to_numpy()]
+                else:
+                    gamestates_np = np.append(
+                        gamestates_np, [gamestate.to_numpy()], axis=0)
+                if current_game_status == GameStatus.GAME_OVER or current_game_status == GameStatus.WIN:
+                    save_gamestates_to_csv(gamestates_np, num)
+                    gamestates_np = None
+
             if (current_game_status == GameStatus.GAME_OVER):
                 print_text(SCREEN, 'GAME OVER', pygame.font.Font(None, 128))
             elif (current_game_status == GameStatus.WIN):
@@ -187,9 +213,6 @@ def main(num):
 
             # Update Screen
             pygame.display.flip()
-
-            # Convert gamestate to a numpy array
-            gamestate.to_numpy()
 
         clock.tick(CONSTANTS.FPS)
 
