@@ -60,3 +60,7 @@ GAME_START_POSITIONS = [
         'goal_rotation_deg' : 0,
     },
 ]
+
+# GameState tracking
+SAVE_GAMESTATE_TO_FILE = True
+GAMESTATE_SAVE_FILENAME_FORMAT = 'gamestates_{}.csv'
