@@ -10,7 +10,7 @@ from src.commonUtils import normalize_angle
 
 class GameState:
     def __init__(self, car: Car, track: Track):
-        self.car_position: Vector2 = car.position
+        self.car_position: Vector2 = car.position.copy()
         self.car_facing: float = car.angle
         self.car_speed: float = car.speed
         self.car_steer_angle: float = car.steer_angle
@@ -50,7 +50,7 @@ class GameState:
 
     def update(self, car: Car, keys_pressed: any):
         last_pos = self.car_position
-        self.car_position = car.position
+        self.car_position = car.position.copy()
         self.car_facing = car.angle
         self.car_speed: float = car.speed
         self.car_steer_angle: float = car.steer_angle
@@ -71,6 +71,7 @@ class GameState:
             self.w_pressed, self.a_pressed, self.s_pressed, self.d_pressed,
             self.car_speed, self.car_steer_angle,
             *ray_lengths,
+            self.distance_travelled,
             self.obstacle_hit, self.finish_line_reached,
         ])
         return np
