@@ -1,6 +1,8 @@
 import pygame
 import src.constants as CONSTANTS
+from src.obstacle import Obstacle
 from typing import Tuple
+
 
 class Track(pygame.sprite.Sprite):
 
@@ -25,3 +27,8 @@ class Track(pygame.sprite.Sprite):
             return self.image.get_at((off_x, off_y))
         else:
             return None
+
+    def place_obstacle(self, obstacle: Obstacle, abs_pos):
+        position = (abs_pos[0], abs_pos[1]-CONSTANTS.OFFSET)
+        self.image.blit(obstacle.image, position)
+        self.mask = pygame.mask.from_surface(self.image)
