@@ -1,6 +1,8 @@
 import pygame
 import src.constants as CONSTANTS
+from src.obstacle import Obstacle
 from typing import Tuple
+
 
 class Track(pygame.sprite.Sprite):
 
@@ -15,9 +17,6 @@ class Track(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft=(0, CONSTANTS.OFFSET))
         self.mask = pygame.mask.from_surface(self.image)
 
-    def getImage(self):
-        return pygame.image.load(self.track_path).convert()
-
     def get_at(self, abs_pt: Tuple[int, int]) -> pygame.Color:
         off_x = abs_pt[0] - self.rect.topleft[0]
         off_y = abs_pt[1] - self.rect.topleft[1]
@@ -25,3 +24,8 @@ class Track(pygame.sprite.Sprite):
             return self.image.get_at((off_x, off_y))
         else:
             return None
+
+    def place_obstacle(self, obstacle: Obstacle, abs_pos):
+        position = (abs_pos[0], abs_pos[1]-CONSTANTS.OFFSET)
+        self.image.blit(obstacle.image, position)
+        self.mask = pygame.mask.from_surface(self.image)
