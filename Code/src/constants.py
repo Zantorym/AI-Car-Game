@@ -13,6 +13,7 @@ BLACK = pygame.Color(0, 0, 0)
 L_GREEN = pygame.Color(0, 220, 0, 255)
 D_GREEN = pygame.Color(0, 80, 0)
 DARK_RED = pygame.Color(255, 100, 100)
+YELLOW = pygame.Color(220, 220, 0)
 
 # Font constants
 SPEED_FONT = pygame.font.SysFont('comicsans', 50)
@@ -26,6 +27,7 @@ D_FONT = pygame.font.SysFont('comicsans', 32)
 COLLISION_EVENT = pygame.USEREVENT + 1
 STOP_GAME_ON_GAMEOVER: bool = True
 STOP_GAME_ON_WIN: bool = True
+PRINT_MOUSE_CLICK_LOCATION: bool = True
 
 # Car related default values
 STEER_MANEURABILITY = 5
@@ -72,3 +74,4 @@ GAMESTATE_SAVE_FILENAME_FORMAT = 'gamestates_{}.csv'
 # Obstacles related
 OBSTACLE_DEFAULT_RADIUS = 20
 OBSTACLE_DEFAULT_COLOR = DARK_RED
+MAX_OBSTACLES_PER_TRACK = 3

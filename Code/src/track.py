@@ -17,9 +17,6 @@ class Track(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft=(0, CONSTANTS.OFFSET))
         self.mask = pygame.mask.from_surface(self.image)
 
-    def getImage(self):
-        return pygame.image.load(self.track_path).convert()
-
     def get_at(self, abs_pt: Tuple[int, int]) -> pygame.Color:
         off_x = abs_pt[0] - self.rect.topleft[0]
         off_y = abs_pt[1] - self.rect.topleft[1]
