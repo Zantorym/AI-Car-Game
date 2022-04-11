@@ -81,3 +81,11 @@ TRAINING_NAMES = ['speed', 'angle', 'r1', 'r2', 'r3', 'r4', 'r5', 'r6', 'r7', 'r
 OBSTACLE_DEFAULT_RADIUS = 20
 OBSTACLE_DEFAULT_COLOR = DARK_RED
 MAX_OBSTACLES_PER_TRACK = 3
+
+# Bot related
+DEFAULT_ACTION_DICT = {
+    'w': False,
+    'a': False,
+    's': False,
+    'd': False
+}

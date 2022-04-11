@@ -152,7 +152,7 @@ class OptionsMenu(Menu):
             self.check_input()
             self.game.display.fill((0,0,0))
             self.game.draw_text('Options', 30, self.game.DISPLAY_W/2, self.game.DISPLAY_H/2 - 20)
-            self.game.draw_text('Select obsticles', 20, self.game.DISPLAY_W/2, self.game.DISPLAY_H/2 + 10)
+            self.game.draw_text('Select obstacles', 20, self.game.DISPLAY_W/2, self.game.DISPLAY_H/2 + 10)
             self.draw_cursor()
             self.blit_screen()
         
@@ -162,9 +162,9 @@ class OptionsMenu(Menu):
             self.run_display = False
         elif self.game.UP_KEY or self.game.DOWN_KEY:
             if self.state == 'Track':
-                self.state = 'Obsticles'
+                self.state = 'Obstacles'
                 self.cursor_rect.midtop = (self.obsticlesx + self.offset, self.obsticlesy)
-            elif self.state == 'Obsticles':
+            elif self.state == 'Obstacles':
                 self.state = 'Track'
                 self.cursor_rect.midtop = (self.trackx + self.offset, self.tracky)
         elif self.game.START_KEY:

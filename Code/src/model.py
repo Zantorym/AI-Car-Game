@@ -37,8 +37,7 @@ def train_and_save_model():
 def get_model():
     return load_model(CONSTANTS.MODEL_NAME)
 
-def predict_action(current_gamedata):
-    x = current_gamedata[CONSTANTS.TRAINING_NAMES]
+def predict_action(x):
     model = get_model()
     actions = model.predict(x)
     return actions.round()

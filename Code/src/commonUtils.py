@@ -1,4 +1,5 @@
 from typing import Tuple
+import pandas as pd
 from pygame import Color, Vector2
 
 def print_text(surface, text, font, color=Color("tomato")):
@@ -23,3 +24,6 @@ def is_intersecting_color(track_color: Color) -> bool:
     if not track_color:
         return False
     return track_color[3] == 255
+
+def create_df_for_model(data, type):
+    return pd.DataFrame(data, columns=type)

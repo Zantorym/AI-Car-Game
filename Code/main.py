@@ -13,7 +13,7 @@ from src.car import Car, Steering, Acceleration
 from src.track import Track
 from src.goal import Goal
 from src.obstacle import Obstacle
-from src.commonUtils import print_text
+from src.commonUtils import print_text, create_df_for_model
 
 from pygame.locals import (
     K_w,
@@ -27,7 +27,7 @@ from pygame.locals import (
 
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
-ap.add_argument("-p", "--player", help="who is playing the game: human or ai", default='human')
+ap.add_argument("-p", "--player", help="who is playing the game: human or ai", default='ai')
 args = vars(ap.parse_args())
 
 class GameStatus(Enum):
@@ -50,6 +50,7 @@ game_reward = 0
 score = 0
 player = args['player']
 save_gamestate = player == 'human'
+
 
 key_strokes = {'w': False, 'a': False, 's': False, 'd': False}
 
@@ -87,18 +88,18 @@ def render_controls(surface, key_strokes):
     pygame.draw.rect(surface, CONSTANTS.BLACK, (105, 53, 40, 40), 2)  # D
 
 
-def update_car(car, keys_pressed):
+def update_car(car, keys_pressed, ai_keys_action):
     steering = Steering.NONE
     acceleration = Acceleration.NONE
 
-    if keys_pressed[pygame.K_a] and not keys_pressed[pygame.K_d]:
+    if (keys_pressed[pygame.K_a] and not keys_pressed[pygame.K_d]) or (ai_keys_action['a'] and not ai_keys_action['d']):
         steering = Steering.LEFT
-    elif keys_pressed[pygame.K_d] and not keys_pressed[pygame.K_a]:
+    elif keys_pressed[pygame.K_d] and not keys_pressed[pygame.K_a] or (ai_keys_action['d'] and not ai_keys_action['a']):
         steering = Steering.RIGHT
 
-    if keys_pressed[pygame.K_w] and not keys_pressed[pygame.K_s]:
+    if keys_pressed[pygame.K_w] and not keys_pressed[pygame.K_s] or (ai_keys_action['w'] and not ai_keys_action['s']):
         acceleration = Acceleration.ACCELERATE
-    elif keys_pressed[pygame.K_s] and not keys_pressed[pygame.K_w]:
+    elif keys_pressed[pygame.K_s] and not keys_pressed[pygame.K_w] or (ai_keys_action['s'] and not ai_keys_action['w']):
         acceleration = Acceleration.BRAKE
 
     car.update(steering, acceleration)
@@ -106,14 +107,12 @@ def update_car(car, keys_pressed):
 
 def save_gamestates_to_csv(gamestates: np.ndarray):
     if gamestates is not None:
-        gamedata = pd.DataFrame(gamestates, columns=CONSTANTS.COLUMN_NAMES)
+        gamedata = create_df_for_model(gamestates, CONSTANTS.COLUMN_NAMES)
         print(gamedata)
         if exists(CONSTANTS.GAMESTATE_FILE):
             gamedata.to_csv(CONSTANTS.GAMESTATE_FILE, mode='a', header=False)
         else:
             gamedata.to_csv(CONSTANTS.GAMESTATE_FILE)
-        # np.savetxt(CONSTANTS.GAMESTATE_FILE.format(
-        #     suffix), gamestates, fmt='%10.5f', delimiter=',')
 
 
 def main(num):
@@ -122,6 +121,7 @@ def main(num):
     current_game_status = GameStatus.PLACE_OBSTACLES
 
     track_num = num
+    ai_keys_action = CONSTANTS.DEFAULT_ACTION_DICT
 
     # Setting the car starting position for the track
     game_start_position = CONSTANTS.GAME_START_POSITIONS[int(track_num)]
@@ -152,38 +152,54 @@ def main(num):
     car_group.add(car)
     obstacles: List[Obstacle] = []
 
+    keys_pressed = pygame.key.get_pressed()
     running = True
     while running:
         mouse_down = False
 
-        if player == 'human':
-            for event in pygame.event.get():
-                # Check for KEYDOWN event
-                if event.type == KEYDOWN:
-                    # If the Esc key is pressed, then exit the main loop
-                    if event.key == K_ESCAPE:
-                        running = False
-
-                # Check for QUIT event. If QUIT, then set running to false.
-                elif event.type == QUIT:
+        for event in pygame.event.get():
+            # Check for KEYDOWN event
+            if event.type == KEYDOWN:
+                # If the Esc key is pressed, then exit the main loop
+                if event.key == K_ESCAPE:
                     running = False
 
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    mouse_down = True
+            # Check for QUIT event. If QUIT, then set running to false.
+            elif event.type == QUIT:
+                running = False
 
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_down = True
+
+        if player == 'human':
+            for event in pygame.event.get():
                 # Checking user event
                 keys_pressed = pygame.key.get_pressed()
         else:
-            # Get data from current state in a numpy array
-            current_gamedata = gamestate.to_numpy()
-            # Send data to trained model and get results
-            actions = predict_action(current_gamedata)
-            # Fire events based on result
-            pygame.K_w = bool(actions[0])
-            pygame.K_a = bool(actions[1])
-            pygame.K_s = bool(actions[2])
-            pygame.K_d = bool(actions[3])
-            keys_pressed = pygame.key.get_pressed()
+            if(current_game_status != GameStatus.PLACE_OBSTACLES):
+                print('sdikbfjb')
+                # Get data from current state in a numpy array
+                current_gamedata = [gamestate.to_numpy()[4:19]]
+                x = create_df_for_model(current_gamedata, CONSTANTS.TRAINING_NAMES)
+                # Send data to trained model and get results
+                actions = predict_action(x).flatten()
+                print(actions)
+                # Fire events based on result
+                # pygame.event.clear()
+                # if bool(actions[0]):
+                #     pygame.event.post(pygame.event.Event(pygame.KEYDOWN, key=pygame.K_w))
+                # if bool(actions[1]):
+                #     pygame.event.post(pygame.event.Event(pygame.KEYDOWN, key=pygame.K_a))
+                # if bool(actions[2]):
+                #     pygame.event.post(pygame.event.Event(pygame.KEYDOWN, key=pygame.K_s))
+                # if bool(actions[3]):
+                #     pygame.event.post(pygame.event.Event(pygame.KEYDOWN, key=pygame.K_d))
+                ai_keys_action = {
+                    'w': bool(actions[0]),
+                    'a': bool(actions[1]),
+                    's': bool(actions[2]),
+                    'd': bool(actions[3])
+                }
 
         # Only update car and game status if not yet game over
         if (not (current_game_status == GameStatus.GAME_OVER and CONSTANTS.STOP_GAME_ON_GAMEOVER)) and \
@@ -201,9 +217,10 @@ def main(num):
                     if len(obstacles) == CONSTANTS.MAX_OBSTACLES_PER_TRACK:
                         current_game_status = GameStatus.ONGOING
 
+            # Update car attributes
             if current_game_status != GameStatus.PLACE_OBSTACLES:
                 # Handle game functions
-                update_car(car, keys_pressed)
+                update_car(car, keys_pressed, ai_keys_action)
                 # Update gamestate
                 gamestate.update(car, keys_pressed)
 

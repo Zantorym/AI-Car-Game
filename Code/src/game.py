@@ -2,7 +2,7 @@ import pygame
 from src.menu import *
 
 class Game():
-    def __init__(self, player='human'):
+    def __init__(self, player='ai'):
         '''
         @params: player- signifies wether the game is being played bya human or ai. Values can be one of ['human', 'ai']
         '''
