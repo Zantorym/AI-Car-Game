@@ -2,8 +2,12 @@ import pygame
 from src.menu import *
 
 class Game():
-    def __init__(self):
+    def __init__(self, player='human'):
+        '''
+        @params: player- signifies wether the game is being played bya human or ai. Values can be one of ['human', 'ai']
+        '''
         pygame.init()
+        self.player = player
         self.running, self.playing = True, False
         self.UP_KEY, self.DOWN_KEY, self.START_KEY, self.BACK_KEY = False, False, False, False
         self.DISPLAY_W, self.DISPLAY_H = 1200, 900

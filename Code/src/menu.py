@@ -5,6 +5,7 @@ from main import main
 class Menu():
     def __init__(self, game):
         self.game = game
+        self.player = game.player
         self.mid_w, self.mid_h = self.game.DISPLAY_W / 2, self.game.DISPLAY_H / 2
         self.run_display = True
         self.cursor_rect = pygame.Rect(0,0,20,20)
@@ -34,7 +35,8 @@ class MainMenu(Menu):
             self.check_input()
             self.game.display.fill(self.game.BLACK)
             self.game.draw_text('Main Menu', 30, self.game.DISPLAY_W/2, self.game.DISPLAY_H/2 - 20)
-            self.game.draw_text('Start Game', 30, self.startx, self.starty)
+            start_text = 'Start Game' if self.player == 'human' else 'Start Game as AI'
+            self.game.draw_text(start_text, 30, self.startx, self.starty)
             self.game.draw_text('Options', 30, self.optionsx, self.optionsy)
             self.game.draw_text('Credits', 30, self.creditsx, self.creditsy)
             self.draw_cursor()
@@ -124,13 +126,13 @@ class TrackMenu(Menu):
             self.run_display = False
         elif self.game.START_KEY:
             if self.state == 'Track 1':
-                call(["python", "main.py"])
+                call(["python", "main.py", '-p', self.player])
                 main(0)
             elif self.state == 'Track 2':
-                call(["python", "main.py"])
+                call(["python", "main.py", '-p', self.player])
                 main(1)
             elif self.state == 'Track 3':
-                call(["python", "main.py"])
+                call(["python", "main.py", '-p', self.player])
                 main(2)
             self.run_display = False
 

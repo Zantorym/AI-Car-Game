@@ -69,7 +69,13 @@ GAME_START_POSITIONS = [
 
 # GameState tracking
 SAVE_GAMESTATE_TO_FILE = True
-GAMESTATE_SAVE_FILENAME_FORMAT = 'gamestates_{}.csv'
+GAMESTATE_FILE = 'assets/gamestates/gamestates.csv'
+COLUMN_NAMES = ['W', 'A', 'S', 'D', 'speed', 'angle', 'r1', 'r2', 'r3', 'r4', 'r5', 'r6', 'r7', 'r8', 'r9', 'r10', 'r11', 'r12', 'r13', 'dist', 'collision', 'goal']
+
+# Model realated
+MODEL_NAME = 'assets/model/ai_car.h5'
+TARGET_NAMES = ['W', 'A', 'S', 'D']
+TRAINING_NAMES = ['speed', 'angle', 'r1', 'r2', 'r3', 'r4', 'r5', 'r6', 'r7', 'r8', 'r9', 'r10', 'r11', 'r12', 'r13']
 
 # Obstacles related
 OBSTACLE_DEFAULT_RADIUS = 20

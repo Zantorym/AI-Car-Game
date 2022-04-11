@@ -1,15 +1,20 @@
 import sys
 import pygame
 import numpy as np
+import pandas as pd
+from os.path import exists
 import src.constants as CONSTANTS
+import argparse
 from enum import Enum
 from typing import List
+from src.model import predict_action
 from src.game_state import GameState
 from src.car import Car, Steering, Acceleration
 from src.track import Track
 from src.goal import Goal
 from src.obstacle import Obstacle
 from src.commonUtils import print_text
+
 from pygame.locals import (
     K_w,
     K_a,
@@ -20,6 +25,10 @@ from pygame.locals import (
     K_ESCAPE,
 )
 
+# construct the argument parser and parse the arguments
+ap = argparse.ArgumentParser()
+ap.add_argument("-p", "--player", help="who is playing the game: human or ai", default='human')
+args = vars(ap.parse_args())
 
 class GameStatus(Enum):
     ONGOING = 0
@@ -39,9 +48,10 @@ action_space = None
 observation_space = None
 game_reward = 0
 score = 0
+player = args['player']
+save_gamestate = player == 'human'
 
 key_strokes = {'w': False, 'a': False, 's': False, 'd': False}
-
 
 def show_key_strokes(surface, key_strokes):
     active = CONSTANTS.D_GREEN
@@ -94,10 +104,16 @@ def update_car(car, keys_pressed):
     car.update(steering, acceleration)
 
 
-def save_gamestates_to_csv(gamestates: np.ndarray, suffix: str):
+def save_gamestates_to_csv(gamestates: np.ndarray):
     if gamestates is not None:
-        np.savetxt(CONSTANTS.GAMESTATE_SAVE_FILENAME_FORMAT.format(
-            suffix), gamestates, fmt='%10.5f', delimiter=',')
+        gamedata = pd.DataFrame(gamestates, columns=CONSTANTS.COLUMN_NAMES)
+        print(gamedata)
+        if exists(CONSTANTS.GAMESTATE_FILE):
+            gamedata.to_csv(CONSTANTS.GAMESTATE_FILE, mode='a', header=False)
+        else:
+            gamedata.to_csv(CONSTANTS.GAMESTATE_FILE)
+        # np.savetxt(CONSTANTS.GAMESTATE_FILE.format(
+        #     suffix), gamestates, fmt='%10.5f', delimiter=',')
 
 
 def main(num):
@@ -122,7 +138,7 @@ def main(num):
     car = Car(car_start_x, car_start_y, car_start_angle,
               sprite_path='assets/car.png')
     gamestate = GameState(car, track)
-    if (CONSTANTS.SAVE_GAMESTATE_TO_FILE):
+    if (save_gamestate):
         gamestates_np = None
 
     all_sprites_group = pygame.sprite.Group()
@@ -139,21 +155,34 @@ def main(num):
     running = True
     while running:
         mouse_down = False
-        for event in pygame.event.get():
-            # Check for KEYDOWN event
-            if event.type == KEYDOWN:
-                # If the Esc key is pressed, then exit the main loop
-                if event.key == K_ESCAPE:
+
+        if player == 'human':
+            for event in pygame.event.get():
+                # Check for KEYDOWN event
+                if event.type == KEYDOWN:
+                    # If the Esc key is pressed, then exit the main loop
+                    if event.key == K_ESCAPE:
+                        running = False
+
+                # Check for QUIT event. If QUIT, then set running to false.
+                elif event.type == QUIT:
                     running = False
 
-            # Check for QUIT event. If QUIT, then set running to false.
-            elif event.type == QUIT:
-                running = False
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    mouse_down = True
 
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                mouse_down = True
-
-            # Checking user event
+                # Checking user event
+                keys_pressed = pygame.key.get_pressed()
+        else:
+            # Get data from current state in a numpy array
+            current_gamedata = gamestate.to_numpy()
+            # Send data to trained model and get results
+            actions = predict_action(current_gamedata)
+            # Fire events based on result
+            pygame.K_w = bool(actions[0])
+            pygame.K_a = bool(actions[1])
+            pygame.K_s = bool(actions[2])
+            pygame.K_d = bool(actions[3])
             keys_pressed = pygame.key.get_pressed()
 
         # Only update car and game status if not yet game over
@@ -214,20 +243,20 @@ def main(num):
                 gamestate.set_finish_line_reached(False)
 
             # Save gamestate to a numpy array
-            if current_game_status == GameStatus.ONGOING and CONSTANTS.SAVE_GAMESTATE_TO_FILE:
+            if current_game_status == GameStatus.ONGOING and save_gamestate:
                 if gamestates_np is None:
                     gamestates_np = [gamestate.to_numpy()]
                 else:
                     gamestates_np = np.append(
                         gamestates_np, [gamestate.to_numpy()], axis=0)
-                if current_game_status == GameStatus.GAME_OVER or current_game_status == GameStatus.WIN:
-                    save_gamestates_to_csv(gamestates_np, num)
-                    gamestates_np = None
+            if current_game_status == GameStatus.GAME_OVER or current_game_status == GameStatus.WIN:
+                save_gamestates_to_csv(gamestates_np)
+                gamestates_np = None
 
             if (current_game_status == GameStatus.GAME_OVER):
                 print_text(SCREEN, 'GAME OVER', pygame.font.Font(None, 128))
             elif (current_game_status == GameStatus.WIN):
-                print_text(SCREEN, 'GOAL', pygame.font.Font(None, 128))
+                print_text(SCREEN, 'TRAINING MODEL NOW', pygame.font.Font(None, 128))
 
             # Update Screen
             pygame.display.flip()
@@ -236,6 +265,7 @@ def main(num):
 
     pygame.quit()
     sys.exit()
+
 
 
 # if __name__ == '__main__':
