@@ -126,13 +126,13 @@ class TrackMenu(Menu):
             self.run_display = False
         elif self.game.START_KEY:
             if self.state == 'Track 1':
-                call(["python", "main.py", '-p', self.player])
+                call(["python", "main.py"])
                 main(0)
             elif self.state == 'Track 2':
-                call(["python", "main.py", '-p', self.player])
+                call(["python", "main.py"])
                 main(1)
             elif self.state == 'Track 3':
-                call(["python", "main.py", '-p', self.player])
+                call(["python", "main.py"])
                 main(2)
             self.run_display = False
 

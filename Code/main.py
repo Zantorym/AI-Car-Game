@@ -170,14 +170,13 @@ def main(num):
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_down = True
-
-        if player == 'human':
-            for event in pygame.event.get():
-                # Checking user event
+            if player == 'human':
                 keys_pressed = pygame.key.get_pressed()
-        else:
+        # if player == 'human':
+        #     for event in pygame.event.get():
+                # Checking user event
+        if player == 'ai':
             if(current_game_status != GameStatus.PLACE_OBSTACLES):
-                print('sdikbfjb')
                 # Get data from current state in a numpy array
                 current_gamedata = [gamestate.to_numpy()[4:19]]
                 x = create_df_for_model(current_gamedata, CONSTANTS.TRAINING_NAMES)
@@ -185,15 +184,6 @@ def main(num):
                 actions = predict_action(x).flatten()
                 print(actions)
                 # Fire events based on result
-                # pygame.event.clear()
-                # if bool(actions[0]):
-                #     pygame.event.post(pygame.event.Event(pygame.KEYDOWN, key=pygame.K_w))
-                # if bool(actions[1]):
-                #     pygame.event.post(pygame.event.Event(pygame.KEYDOWN, key=pygame.K_a))
-                # if bool(actions[2]):
-                #     pygame.event.post(pygame.event.Event(pygame.KEYDOWN, key=pygame.K_s))
-                # if bool(actions[3]):
-                #     pygame.event.post(pygame.event.Event(pygame.KEYDOWN, key=pygame.K_d))
                 ai_keys_action = {
                     'w': bool(actions[0]),
                     'a': bool(actions[1]),
