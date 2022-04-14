@@ -1,28 +1,18 @@
 import pygame
 import src.constants as CONSTANTS
-from enum import Enum
+from src.enums import Steering, Acceleration
 from math import sin, radians, degrees
 from pygame.math import Vector2
 
-class Steering(Enum):
-    NONE = 0
-    LEFT = 1
-    RIGHT = 2
-
-class Acceleration(Enum):
-    NONE = 0
-    ACCELERATE = 1
-    BRAKE = 2
-
 class Car(pygame.sprite.Sprite):
-    def __init__(self, x, y, angle=0.0, sprite_path='assets/car.png',
+    def __init__(self, start_pos, angle=0.0, sprite_path='assets/car.png',
                 manueverability=CONSTANTS.STEER_MANEURABILITY,
                 max_steering=CONSTANTS.MAX_STEER_ANGLE,
                 acceleration=CONSTANTS.ACCELERATION,
                 max_acceleration=CONSTANTS.MAX_ACCELERATION):
         super(Car, self).__init__()
 
-        self.position = Vector2((x, y))
+        self.position = Vector2(start_pos)
         self.velocity = Vector2((0, 0))
 
         self.sprite = pygame.image.load(sprite_path).convert_alpha()

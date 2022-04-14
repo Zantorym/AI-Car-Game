@@ -1,6 +1,7 @@
 from typing import Tuple
 from pygame import Color, Vector2
 
+
 def print_text(surface, text, font, color=Color("tomato")):
     text_surface = font.render(text, True, color)
 
@@ -9,6 +10,7 @@ def print_text(surface, text, font, color=Color("tomato")):
 
     surface.blit(text_surface, rect)
 
+
 def normalize_angle(angle):
     while angle > 360:
         angle -= 360
@@ -16,10 +18,18 @@ def normalize_angle(angle):
         angle += 360
     return angle
 
+
 def normalize_vector_endpoint(endpoint: Vector2) -> Tuple[int, int]:
     return (round(endpoint.x), round(endpoint.y))
+
 
 def is_intersecting_color(track_color: Color) -> bool:
     if not track_color:
         return False
     return track_color[3] == 255
+
+
+# def save_gamestates_to_csv(gamestates: np.ndarray, suffix: str):
+#     if gamestates is not None:
+#         np.savetxt(CONSTANTS.GAMESTATE_SAVE_FILENAME_FORMAT.format(
+#             suffix), gamestates, fmt='%10.5f', delimiter=',')

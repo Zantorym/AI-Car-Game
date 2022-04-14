@@ -2,6 +2,7 @@ import pygame
 from subprocess import call
 from main import main
 
+
 class Menu():
     def __init__(self, game):
         self.game = game
