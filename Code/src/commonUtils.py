@@ -1,5 +1,7 @@
+import numpy
 from typing import Tuple
 from pygame import Color, Vector2
+from src import constants as CONSTANTS
 
 
 def print_text(surface, text, font, color=Color("tomato")):
@@ -29,7 +31,7 @@ def is_intersecting_color(track_color: Color) -> bool:
     return track_color[3] == 255
 
 
-# def save_gamestates_to_csv(gamestates: np.ndarray, suffix: str):
-#     if gamestates is not None:
-#         np.savetxt(CONSTANTS.GAMESTATE_SAVE_FILENAME_FORMAT.format(
-#             suffix), gamestates, fmt='%10.5f', delimiter=',')
+def save_gamestates_to_csv(gamestates: numpy.ndarray):
+    if gamestates is not None:
+        with open(CONSTANTS.GAMESTATE_SAVE_FILENAME, 'ab') as f:
+            numpy.savetxt(f, gamestates, fmt='%10.5f')

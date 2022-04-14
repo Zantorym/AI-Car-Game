@@ -9,6 +9,10 @@ from pygame.locals import (
 
 
 def show_key_strokes(surface, key_strokes):
+    W_FONT = pygame.font.SysFont('comicsans', 32)
+    A_FONT = pygame.font.SysFont('comicsans', 32)
+    S_FONT = pygame.font.SysFont('comicsans', 32)
+    D_FONT = pygame.font.SysFont('comicsans', 32)
     active = CONSTANTS.D_GREEN
     default = CONSTANTS.GREY
     w = active if key_strokes[K_w] else default
@@ -21,13 +25,13 @@ def show_key_strokes(surface, key_strokes):
     pygame.draw.rect(surface, s, (55, 53, 40, 40))
     pygame.draw.rect(surface, d, (105, 53, 40, 40))
 
-    surface.blit(CONSTANTS.W_FONT.render(
+    surface.blit(W_FONT.render(
         f'W', True, CONSTANTS.BLACK), dest=(65, 18))  # W
-    surface.blit(CONSTANTS.A_FONT.render(
+    surface.blit(A_FONT.render(
         f'A', True, CONSTANTS.BLACK), dest=(17, 62))  # A
-    surface.blit(CONSTANTS.S_FONT.render(
+    surface.blit(S_FONT.render(
         f'S', True, CONSTANTS.BLACK), dest=(67, 62))  # S
-    surface.blit(CONSTANTS.D_FONT.render(
+    surface.blit(D_FONT.render(
         f'D', True, CONSTANTS.BLACK), dest=(117, 62))  # D
 
 

@@ -1,3 +1,4 @@
+import numpy
 import pygame
 import src.constants as CONSTANTS
 from typing import List
@@ -42,7 +43,7 @@ class Environment:
 
     def reset(self):
         self.car = Car(*self.get_default_car_start())
-        self.gamestate = GameState(self.car, self.track)
+        self.gamestate: GameState = GameState(self.car, self.track)
 
         self.car_group = pygame.sprite.GroupSingle()
         self.car_group.add(self.car)
@@ -81,6 +82,16 @@ class Environment:
         surface.blit(self.track.image, self.track.rect)
         surface.blit(self.goal.image, self.goal.rect)
         surface.blit(self.car.image, self.car.rect)
-        # self.car.draw(surface)
         if draw_rays:
             self.gamestate.draw_rays(surface)
+
+    def gamestate_as_np(self, action: int):
+        np = numpy.array([
+            *GameControls.actions_to_keys(action),
+            self.car.speed, self.car.steer_angle,
+            *self.gamestate.ray_lengths(),
+            self.gamestate.distance_travelled,
+            1 if self.game_over else 0,
+            1 if self.win else 0,
+        ])
+        return np

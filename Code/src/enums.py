@@ -3,9 +3,12 @@ from enum import Enum
 
 class GameStatus(Enum):
     PLACE_OBSTACLES = 0
-    ONGOING = 1
-    GAME_OVER = 2
-    WIN = 3
+    GAME_START = 1
+    ONGOING = 2
+    GAME_OVER = 3
+    WIN = 4
+    ESC = 5
+    QUIT = 6
 
 
 class PlayerType(Enum):
