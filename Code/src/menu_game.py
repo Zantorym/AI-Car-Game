@@ -1,7 +1,7 @@
 import pygame
 from src.menu import *
 
-class Game():
+class MenuGame():
     def __init__(self):
         pygame.init()
         self.running, self.playing = True, False
