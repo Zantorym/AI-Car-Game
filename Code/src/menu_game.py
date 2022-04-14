@@ -1,5 +1,5 @@
 import pygame
-from src.menu import *
+from src.menus import *
 
 class MenuGame():
     def __init__(self):
