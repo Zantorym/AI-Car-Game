@@ -2,7 +2,7 @@ import numpy
 import pygame
 import src.constants as CONSTANTS
 from typing import Tuple
-from src.observation import Observations
+from src.observations import Observations
 from src.car import Car
 from src.track import Track
 from src.goal import Goal
@@ -83,7 +83,7 @@ class Environment:
         if draw_rays:
             self.observations.draw_rays(surface)
 
-    def gamestate_as_np(self, action: int):
+    def gamestate_as_np(self, action: int) -> numpy.array:
         np = numpy.array([
             *GameControls.actions_to_keys(action),
             self.car.speed, self.car.steer_angle,
@@ -91,5 +91,12 @@ class Environment:
             self.observations.distance_travelled,
             1 if self.game_over else 0,
             1 if self.win else 0,
+        ])
+        return np
+
+    def observation(self) -> numpy.array:
+        np = numpy.array([
+            self.car.speed, self.car.steer_angle,
+            *self.observations.ray_lengths(),
         ])
         return np

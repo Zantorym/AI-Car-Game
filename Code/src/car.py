@@ -15,7 +15,7 @@ class Car(pygame.sprite.Sprite):
                  manueverability=CONSTANTS.STEER_MANEURABILITY,
                  max_steering=CONSTANTS.MAX_STEER_ANGLE,
                  acceleration=CONSTANTS.ACCELERATION,
-                 max_acceleration=CONSTANTS.MAX_ACCELERATION):
+                 max_speed=CONSTANTS.MAX_SPEED):
         super(Car, self).__init__()
 
         self.position = Vector2(start_pos)
@@ -31,7 +31,7 @@ class Car(pygame.sprite.Sprite):
         self.maneuverability_value = manueverability
         self.max_steering = max_steering
         self.acceleration_value = acceleration
-        self.max_acceleration = max_acceleration
+        self.max_speed = max_speed
 
         self.image = self.sprite.copy()
         self.rect = self.image.get_rect(center=self.position)
@@ -85,4 +85,4 @@ class Car(pygame.sprite.Sprite):
             self.speed -= self.acceleration_value * \
                 CONSTANTS.NATURAL_DECELERATION_MULTIPLIER
 
-        self.speed = max(0, min(self.speed, self.max_acceleration))
+        self.speed = max(0, min(self.speed, self.max_speed))

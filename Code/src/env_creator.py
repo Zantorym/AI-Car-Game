@@ -1,3 +1,6 @@
+import json
+from random import choice, randint
+from typing import Tuple
 from src.environment import Environment
 import src.constants as CONSTANTS
 
@@ -8,16 +11,25 @@ class EnvironmentCreator:
                  settings_file: str = './env_random_settings.json'
                  ):
         self.randomized = randomize
+        if not randomize:
+            self.random_settings = self.read_settings_file(settings_file)
 
     def create_environment(self,
                            track_num: int) -> Environment:
         if not self.randomized:
-            env = Environment(track_num, *self.get_default_car_start(track_num))
+            env = Environment(
+                track_num, *self.get_default_car_start(track_num))
             return env
         else:
-            is_valid = False
-            while not is_valid:
-                pass
+            while True:
+                pos = self.generate_car_start_pos(track_num)
+                angle = self.generate_car_start_angle()
+                speed = self.generate_car_start_speed()
+                steer_angle = self.generate_car_start_steer_angle()
+                env = Environment(track_num, pos, angle, speed, steer_angle)
+                if self.is_valid_start(env):
+                    return env
+
 
     def get_default_car_start(self, track_num: int):
         game_start_position = CONSTANTS.GAME_START_POSITIONS[track_num]
@@ -28,3 +40,40 @@ class EnvironmentCreator:
     def is_valid_start(self, env: Environment):
         return not (env.has_collide_track()
                     or env.has_collide_goal())
+
+    def read_settings_file(self, filename):
+        with open(filename) as json_file:
+            data = json.load(json_file)
+        return data
+
+    def generate_car_start_pos(self, track_num: int) -> Tuple[int, int]:
+        possible_start_pos = self.random_settings['car_start_positions'][track_num]
+        shift_x = self.random_settings['car_start_pos_shift_x']
+        shift_y = self.random_settings['car_start_pos_shift_y']
+
+        start_pos = choice(possible_start_pos)
+        shifted_x = start_pos[0] + randint(-1 * shift_x, shift_x)
+        shifted_y = start_pos[1] + randint(-1 * shift_y, shift_y)
+        return (shifted_x, shifted_y)
+
+    def generate_car_start_angle(self) -> int:
+        step_size = self.random_settings['car_start_angle_step_size']
+        angle = randint(0, 359)
+        angle = (angle // step_size) * step_size
+        return angle
+
+    def generate_car_start_speed(self) -> float:
+        step_size = self.random_settings['car_start_speed_step_size']
+        max_speed = CONSTANTS.MAX_SPEED
+        steps = max_speed // step_size
+        step = randint[0, steps]
+        speed = step_size * step
+        return speed
+
+    def generate_car_start_steer_angle(self) -> float:
+        step_size = self.random_settings['car_start_steer_angle_step_size']
+        max_steer_angle = CONSTANTS.MAX_STEER_ANGLE
+        steps = (max_steer_angle * 2) // step_size
+        step = randint[0, steps]
+        steer_angle = (step_size * step) - max_steer_angle
+        return steer_angle
