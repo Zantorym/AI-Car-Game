@@ -22,11 +22,6 @@ class TrackNum(Enum):
     TRACK2 = 2
 
 
-class CarStartPosType(Enum):
-    TRACK_DEFAULTS = 0
-    RANDOMIZED = 1
-
-
 class Steering(Enum):
     NONE = 0
     LEFT = 1

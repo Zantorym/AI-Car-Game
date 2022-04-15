@@ -8,7 +8,8 @@ from pygame.locals import (
 from typing import List
 from src.controls import GameControls
 from src import constants as CONSTANTS
-from src.enums import CarStartPosType, GameStatus, TrackNum
+from src.enums import GameStatus, TrackNum
+from src.env_creator import EnvironmentCreator
 from src.environment import Environment
 from src.obstacle import Obstacle
 from src.game_display_utils import render_controls
@@ -17,8 +18,7 @@ from src.commonUtils import print_text, save_gamestates_to_csv
 
 class Game:
     def __init__(self, track_num: TrackNum):
-        self.environment = Environment(track_num,
-                                       CarStartPosType.TRACK_DEFAULTS)
+        self.environment: Environment = EnvironmentCreator().create_environment(track_num)
         self.obstacles: List[Obstacle] = []
         self.game_status = GameStatus.PLACE_OBSTACLES
         self.clock = pygame.time.Clock()

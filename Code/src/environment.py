@@ -1,8 +1,8 @@
 import numpy
 import pygame
 import src.constants as CONSTANTS
-from typing import List
-from src.observation import GameState
+from typing import Tuple
+from src.observation import Observations
 from src.car import Car
 from src.track import Track
 from src.goal import Goal
@@ -15,10 +15,17 @@ class Environment:
     def __init__(
         self,
         track_num: TrackNum,
-        car_start: CarStartPosType,
+        car_start: Tuple[int, int],
+        car_angle: float,
+        car_speed: float = 0.0,
+        car_steer_angle: float = 0.0,
     ):
         self.track_num = track_num
-        self.car_start_pos_type = car_start
+        self.start_car_pos = car_start
+        self.start_car_angle = car_angle
+        self.start_car_speed = car_speed
+        self.start_car_steer_angle = car_steer_angle
+
         self.track = Track(self.track_num)
         self.goal = Goal(*self.get_goal_settings())
 
@@ -26,13 +33,6 @@ class Environment:
         self.track_group.add(self.track)
         self.goal_group = pygame.sprite.Group()
         self.goal_group.add(self.goal)
-
-    def get_default_car_start(self):
-        game_start_position = CONSTANTS.GAME_START_POSITIONS[int(
-            self.track_num)]
-        start_pos = game_start_position['car_start_pos']
-        start_angle = game_start_position['car_start_angle']
-        return (start_pos, start_angle)
 
     def get_goal_settings(self):
         game_start_position = CONSTANTS.GAME_START_POSITIONS[self.track_num]
@@ -42,8 +42,10 @@ class Environment:
         return (goal_dimension, goal_center, goal_rotation)
 
     def reset(self):
-        self.car = Car(*self.get_default_car_start())
-        self.gamestate: GameState = GameState(self.car, self.track)
+        self.car = Car(self.start_car_pos, self.start_car_angle,
+                       start_speed=self.start_car_speed,
+                       start_steer_angle=self.start_car_steer_angle)
+        self.observations: Observations = Observations(self.car, self.track)
 
         self.car_group = pygame.sprite.GroupSingle()
         self.car_group.add(self.car)
@@ -64,14 +66,10 @@ class Environment:
             collided=pygame.sprite.collide_mask
         )
 
-    def is_valid_start(self):
-        return not (self.has_collide_track()
-                    or self.has_collide_goal())
-
     def next(self, action: int):
         (steering, acceleration) = GameControls.action_to_car_controls(action)
         self.car.update(steering, acceleration)
-        self.gamestate.update(self.car)
+        self.observations.update(self.car)
         self.game_over = self.has_collide_track()
         self.win = (not self.game_over) and self.has_collide_goal()
 
@@ -83,14 +81,14 @@ class Environment:
         surface.blit(self.goal.image, self.goal.rect)
         surface.blit(self.car.image, self.car.rect)
         if draw_rays:
-            self.gamestate.draw_rays(surface)
+            self.observations.draw_rays(surface)
 
     def gamestate_as_np(self, action: int):
         np = numpy.array([
             *GameControls.actions_to_keys(action),
             self.car.speed, self.car.steer_angle,
-            *self.gamestate.ray_lengths(),
-            self.gamestate.distance_travelled,
+            *self.observations.ray_lengths(),
+            self.observations.distance_travelled,
             1 if self.game_over else 0,
             1 if self.win else 0,
         ])

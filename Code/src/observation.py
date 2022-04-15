@@ -7,7 +7,7 @@ from src.ray import Ray
 from src.commonUtils import normalize_angle
 
 
-class GameState:
+class Observations:
     def __init__(self, car: Car, track: Track):
         self.car_position: Vector2 = car.position.copy()
         self.car_facing: float = car.angle
