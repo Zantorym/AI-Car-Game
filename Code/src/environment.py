@@ -2,7 +2,7 @@ import numpy
 import pygame
 import src.constants as CONSTANTS
 from typing import List
-from src.game_state import GameState
+from src.observation import GameState
 from src.car import Car
 from src.track import Track
 from src.goal import Goal
