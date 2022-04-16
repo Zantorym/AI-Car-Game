@@ -11,7 +11,7 @@ class EnvironmentCreator:
                  settings_file: str = './env_random_settings.json'
                  ):
         self.randomized = randomize
-        if not randomize:
+        if randomize:
             self.random_settings = self.read_settings_file(settings_file)
 
     def create_environment(self,
@@ -27,6 +27,7 @@ class EnvironmentCreator:
                 speed = self.generate_car_start_speed()
                 steer_angle = self.generate_car_start_steer_angle()
                 env = Environment(track_num, pos, angle, speed, steer_angle)
+                env.reset()
                 if self.is_valid_start(env):
                     return env
 
@@ -66,7 +67,7 @@ class EnvironmentCreator:
         step_size = self.random_settings['car_start_speed_step_size']
         max_speed = CONSTANTS.MAX_SPEED
         steps = max_speed // step_size
-        step = randint[0, steps]
+        step = randint(0, steps)
         speed = step_size * step
         return speed
 
@@ -74,6 +75,6 @@ class EnvironmentCreator:
         step_size = self.random_settings['car_start_steer_angle_step_size']
         max_steer_angle = CONSTANTS.MAX_STEER_ANGLE
         steps = (max_steer_angle * 2) // step_size
-        step = randint[0, steps]
+        step = randint(0, steps)
         steer_angle = (step_size * step) - max_steer_angle
         return steer_angle

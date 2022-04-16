@@ -17,6 +17,8 @@ Action     Keys
 
 
 class GameControls:
+    action_space_size: int = 9
+
     def __init__(self):
         pass
 

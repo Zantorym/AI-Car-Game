@@ -51,20 +51,22 @@ class Environment:
         self.car_group.add(self.car)
 
     def has_collide_track(self):
-        return pygame.sprite.spritecollide(
+        collisions = pygame.sprite.spritecollide(
             self.car,
             self.track_group,
             False,
             collided=pygame.sprite.collide_mask
         )
+        return len(collisions) > 0
 
     def has_collide_goal(self):
-        return pygame.sprite.spritecollide(
+        collisions = pygame.sprite.spritecollide(
             self.car,
             self.goal_group,
             False,
             collided=pygame.sprite.collide_mask
         )
+        return len(collisions) > 0
 
     def next(self, action: int):
         (steering, acceleration) = GameControls.action_to_car_controls(action)
@@ -100,3 +102,19 @@ class Environment:
             *self.observations.ray_lengths(),
         ])
         return np
+
+    def reward(self) -> float:
+        if self.game_over:
+            return -2.0
+        else:
+            return self.car.speed
+
+    def done(self) -> bool:
+        return self.game_over or self.win
+
+    def step(self, action: int):
+        self.next(action)
+        next_state = self.observation()
+        reward = self.reward()
+        done = self.done()
+        return (next_state, reward, done, None)
