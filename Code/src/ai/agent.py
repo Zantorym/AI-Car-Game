@@ -38,13 +38,11 @@ class Agent:
         sample = random.random()
         eps_threshold = self.epsilon()
         if sample > eps_threshold:
-            print('-> EXPLOIT <-', sample, eps_threshold, self.steps_done)
             with torch.no_grad():
                 actions = self.policy_net(state)
                 action = actions.max(1)[1].view(1, 1)
                 return action
         else:
-            print('EXPLORE', sample, eps_threshold, self.steps_done)
             action = torch.tensor([[random.randrange(GameControls.action_space_size)]],
                                   device=DEVICE,
                                   dtype=torch.long)

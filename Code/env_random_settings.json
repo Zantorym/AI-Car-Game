@@ -1,4 +1,21 @@
 {
+  "car_start_pos_and_angle": [
+    [
+      [[615, 187], -10],
+      [[555, 548], 180],
+      [[891, 804], 180]
+    ],
+    [
+      [[526, 274], 0],
+      [[749, 402], 180],
+      [[560, 272], 190]
+    ],
+    [
+      [[364, 769], 0],
+      [[838, 767], 180],
+      [[741, 266], 10]
+    ]
+  ],
   "car_start_positions": [
     [[500, 809]],
     [
@@ -62,6 +79,7 @@
   ],
   "car_start_pos_shift_x": 10,
   "car_start_pos_shift_y": 10,
+  "car_start_shift_angle": 10,
   "car_start_angle_step_size": 5,
   "car_start_speed_step_size": 0.005,
   "car_start_steer_angle_step_size": 2.5

@@ -1,5 +1,6 @@
 import pygame
 import torch
+from random import choice
 from itertools import count
 from src import constants as CONSTANTS
 from src.env_creator import EnvironmentCreator
@@ -13,7 +14,7 @@ pygame.display.set_caption("Crazy Driver")
 screen = pygame.display.set_mode((CONSTANTS.WIDTH, CONSTANTS.HEIGHT))
 screen.fill((255, 255, 255))
 
-creator = EnvironmentCreator(True)
+creator = EnvironmentCreator(True, has_goal=False)
 agent = Agent()
 clock = pygame.time.Clock()
 
@@ -21,13 +22,14 @@ num_episodes = CONSTANTS.NUM_EPISODES
 for i_episode in range(num_episodes):
 
     # Initialize the environment and state
-    env = creator.create_environment(1)
+    track_num = choice([0, 1, 2])
+    env = creator.create_environment(track_num)
     env.reset()
     state = torch.from_numpy(env.observation()).unsqueeze(0).float()
 
     print('Starting episode no.:', i_episode)
 
-    for t in range(CONSTANTS.MAX_TIMESTEPS_PER_EPISODE):
+    for t in count():
         # Select and perform an action
         action = agent.select_action(state)
         next_state, reward, done, info = env.step(action.item())
@@ -50,6 +52,8 @@ for i_episode in range(num_episodes):
         # clock.tick(CONSTANTS.FPS)
         
         if done:
+            break
+        elif int(t) >= CONSTANTS.MAX_TIMESTEPS_PER_EPISODE:
             break
 
     # Update the target network, copying all weights and biases in DQN

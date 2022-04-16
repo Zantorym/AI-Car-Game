@@ -5,12 +5,12 @@ from src.ai.device import DEVICE
 class DQN(nn.Module):
     def __init__(self, input_size, output_size):
         super(DQN, self).__init__()
-        self.linear1 = nn.Linear(input_size, 100)
+        self.linear1 = nn.Linear(input_size, 50)
         self.activation1 = nn.ReLU()
-        self.linear2 = nn.Linear(100, 50)
+        self.linear2 = nn.Linear(50, 25)
         self.activation2 = nn.ReLU()
-        self.linear3 = nn.Linear(50, output_size)
-        self.softmax = nn.Softmax()
+        self.linear3 = nn.Linear(25, output_size)
+        self.softmax = nn.Softmax(1)
 
     def forward(self, x):
         x = x.to(DEVICE)

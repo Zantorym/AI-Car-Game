@@ -19,6 +19,7 @@ class Environment:
         car_angle: float,
         car_speed: float = 0.0,
         car_steer_angle: float = 0.0,
+        has_goal: bool = True,
     ):
         self.track_num = track_num
         self.start_car_pos = car_start
@@ -27,12 +28,16 @@ class Environment:
         self.start_car_steer_angle = car_steer_angle
 
         self.track = Track(self.track_num)
-        self.goal = Goal(*self.get_goal_settings())
 
         self.track_group = pygame.sprite.Group()
         self.track_group.add(self.track)
-        self.goal_group = pygame.sprite.Group()
-        self.goal_group.add(self.goal)
+
+
+        self.has_goal = has_goal
+        if has_goal:
+            self.goal = Goal(*self.get_goal_settings())
+            self.goal_group = pygame.sprite.Group()
+            self.goal_group.add(self.goal)
 
     def get_goal_settings(self):
         game_start_position = CONSTANTS.GAME_START_POSITIONS[self.track_num]
@@ -60,6 +65,9 @@ class Environment:
         return len(collisions) > 0
 
     def has_collide_goal(self):
+        if not self.has_goal:
+            return False
+
         collisions = pygame.sprite.spritecollide(
             self.car,
             self.goal_group,
@@ -80,7 +88,8 @@ class Environment:
 
     def render(self, surface: pygame.Surface, draw_rays: bool = False):
         surface.blit(self.track.image, self.track.rect)
-        surface.blit(self.goal.image, self.goal.rect)
+        if self.has_goal:
+            surface.blit(self.goal.image, self.goal.rect)
         surface.blit(self.car.image, self.car.rect)
         if draw_rays:
             self.observations.draw_rays(surface)
@@ -97,17 +106,28 @@ class Environment:
         return np
 
     def observation(self) -> numpy.array:
+        ray_lengths = numpy.array(self.observations.ray_lengths())
+        ray_lengths = ray_lengths / CONSTANTS.DEFAULT_RAY_LENGTH
+        speed = self.car.speed / CONSTANTS.MAX_SPEED
+        steer_angle = self.car.steer_angle / CONSTANTS.MAX_STEER_ANGLE
+
         np = numpy.array([
-            self.car.speed, self.car.steer_angle,
-            *self.observations.ray_lengths(),
+            speed, steer_angle,
+            *ray_lengths,
         ])
         return np
 
     def reward(self) -> float:
         if self.game_over:
-            return -2.0
+            return -1.0
+        elif self.car.speed >= CONSTANTS.MAX_SPEED * 0.75:
+            return self.car.speed / CONSTANTS.MAX_SPEED
+        elif self.car.speed <= CONSTANTS.MAX_SPEED * 0.25:
+            return -1.0 * (1.0 - (self.car.speed / CONSTANTS.MAX_SPEED))
+        elif self.car.speed >= CONSTANTS.MAX_SPEED * 0.5:
+            return 0.25
         else:
-            return self.car.speed
+            return -0.25
 
     def done(self) -> bool:
         return self.game_over or self.win
