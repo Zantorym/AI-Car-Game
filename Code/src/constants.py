@@ -59,7 +59,7 @@ GAME_START_POSITIONS = [
 
 # GameState tracking
 SAVE_GAMESTATE_TO_FILE = True
-GAMESTATE_SAVE_FILENAME = 'gamestates.csv'
+GAMESTATE_SAVE_FILENAME = 'assets/gamestate/gamestates.csv'
 
 # Obstacles related
 OBSTACLE_DEFAULT_RADIUS = 20
