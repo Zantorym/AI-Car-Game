@@ -1,54 +1,152 @@
+import numpy
 import pygame
-from src.menu import *
+from pygame.locals import (
+    KEYDOWN,
+    QUIT,
+    K_ESCAPE,
+)
+from typing import List
+from src.controls import GameControls
+from src import constants as CONSTANTS
+from src.enums import CarStartPosType, GameStatus, TrackNum
+from src.environment import Environment
+from src.obstacle import Obstacle
+from src.game_display_utils import render_controls
+from src.commonUtils import print_text, save_gamestates_to_csv
 
-class Game():
-    def __init__(self):
-        pygame.init()
-        self.running, self.playing = True, False
-        self.UP_KEY, self.DOWN_KEY, self.START_KEY, self.BACK_KEY = False, False, False, False
-        self.DISPLAY_W, self.DISPLAY_H = 1200, 900
-        self.display = pygame.Surface((self.DISPLAY_W, self.DISPLAY_H))
-        self.window = pygame.display.set_mode(((self.DISPLAY_W, self.DISPLAY_H)))
-        self.font_name = pygame.font.get_default_font()
-        self.BLACK, self.WHITE = (0, 0, 0), (255, 255, 255)
-        self.main_menu = MainMenu(self)
-        self.track_menu = TrackMenu(self)
-        self.options = OptionsMenu(self)
-        self.credits = CreditsMenu(self)
-        self.curr_menu = self.main_menu
+
+class Game:
+    def __init__(self, track_num: TrackNum):
+        self.environment = Environment(track_num,
+                                       CarStartPosType.TRACK_DEFAULTS)
+        self.obstacles: List[Obstacle] = []
+        self.game_status = GameStatus.PLACE_OBSTACLES
+        self.clock = pygame.time.Clock()
+
+    def get_game_screen(self):
+        screen = pygame.display.set_mode((CONSTANTS.WIDTH, CONSTANTS.HEIGHT))
+        screen.fill((255, 255, 255))
+        self.screen = screen
+
+    def prepare_environment(self):
+        self.environment.reset()
+
+    def handle_events(self):
+        for event in pygame.event.get():
+            if event.type == KEYDOWN:
+                if event.key == K_ESCAPE:
+                    self.game_status = GameStatus.ESC
+
+            elif event.type == QUIT:
+                self.game_status = GameStatus.QUIT
+
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_x, mouse_y = pygame.mouse.get_pos()
+                if CONSTANTS.PRINT_MOUSE_CLICK_LOCATION:
+                    print((mouse_x, mouse_y))
+                if self.game_status == GameStatus.PLACE_OBSTACLES:
+                    obstacle = Obstacle((mouse_x, mouse_y))
+                    self.environment.place_obstacle(obstacle)
+                    self.obstacles.append(obstacle)
+                    if len(self.obstacles) == CONSTANTS.MAX_OBSTACLES_PER_TRACK:
+                        self.game_status = GameStatus.GAME_START
+
+    def render(self, draw_rays=False):
+        self.screen.fill((255, 255, 255))
+        self.environment.render(self.screen, draw_rays)
+
+    def place_obstacles_loop(self):
+        pygame.event.set_allowed([
+            pygame.QUIT,
+            pygame.MOUSEBUTTONDOWN,
+            pygame.KEYDOWN,
+        ])
+
+        while self.game_status == GameStatus.PLACE_OBSTACLES:
+            self.handle_events()
+
+            self.render()
+            mouse_loc = pygame.mouse.get_pos()
+            pygame.draw.circle(self.screen, CONSTANTS.YELLOW,
+                               mouse_loc, CONSTANTS.OBSTACLE_DEFAULT_RADIUS)
+            pygame.display.flip()
+
+            self.clock.tick(CONSTANTS.FPS)
 
     def game_loop(self):
-        while self.playing:
-            self.check_events()
-            if self.START_KEY:
-                self.playing = False
-            self.display.fill(self.BLACK)
-            # self.draw_text('Thanks for Playing', 20, self.DISPLAY_W/2, self.DISPLAY_H/2)
-            self.window.blit(self.display, (0,0))
-            pygame.display.update()
-            self.reset_keys()
+        pygame.event.set_allowed([
+            pygame.QUIT,
+            pygame.KEYDOWN,
+        ])
 
-    def check_events(self):
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.running, self.playing = False, False
-                self.curr_menu.run_display = False
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:
-                    self.START_KEY = True
-                if event.key == pygame.K_BACKSPACE:
-                    self.BACK_KEY = True
-                if event.key == pygame.K_DOWN:
-                    self.DOWN_KEY = True
-                if event.key == pygame.K_UP:
-                    self.UP_KEY = True
-  
-    def reset_keys(self):
-        self.UP_KEY, self.DOWN_KEY, self.START_KEY, self.BACK_KEY = False, False, False, False
-    
-    def draw_text(self, text, size, x, y):
-        font = pygame.font.Font(self.font_name, size)
-        text_surface = font.render(text, True, self.WHITE)
-        text_rect = text_surface.get_rect()
-        text_rect.center = (x,y)
-        self.display.blit(text_surface, text_rect)
+        if (CONSTANTS.SAVE_GAMESTATE_TO_FILE):
+            self.gamestates_np = None
+
+        while self.game_status in [GameStatus.GAME_START, GameStatus.ONGOING]:
+            self.handle_events()
+            keys_pressed = pygame.key.get_pressed()
+
+            action = GameControls.keys_to_actions(keys_pressed)
+            # Car has been controlled, update status to ongoing
+            if self.game_status == GameStatus.GAME_START and action != 0:
+                self.game_status = GameStatus.ONGOING
+            self.environment.next(action)
+
+            # Rendering
+            self.render(True)
+
+            # Create surface for controls display
+            controls_surface = pygame.Surface((200, 100), pygame.SRCALPHA)
+            render_controls(controls_surface, keys_pressed)
+            self.screen.blit(controls_surface, (900, 0))
+
+            # Collision Detection
+            if self.environment.game_over:
+                # returned list is not empty
+                self.game_status = GameStatus.GAME_OVER
+            elif self.environment.win:
+                self.game_status = GameStatus.WIN
+
+            # Save gamestate to a numpy array
+            if self.game_status in [
+                GameStatus.ONGOING,
+                GameStatus.GAME_OVER,
+                GameStatus.WIN,
+            ] and CONSTANTS.SAVE_GAMESTATE_TO_FILE:
+                if self.gamestates_np is None:
+                    self.gamestates_np = [
+                        self.environment.gamestate_as_np(action)]
+                else:
+                    self.gamestates_np = numpy.append(
+                        self.gamestates_np, [self.environment.gamestate_as_np(action)], axis=0)
+
+            if (self.game_status == GameStatus.GAME_OVER):
+                print_text(self.screen, 'GAME OVER',
+                           pygame.font.Font(None, 128))
+            elif (self.game_status == GameStatus.WIN):
+                print_text(self.screen, 'GOAL', pygame.font.Font(None, 128))
+
+            # Update Screen
+            pygame.display.flip()
+
+            self.clock.tick(CONSTANTS.FPS)
+
+    def game_end_loop(self):
+        pygame.event.set_allowed([
+            pygame.QUIT,
+            pygame.KEYDOWN,
+        ])
+
+        save_gamestates_to_csv(self.gamestates_np)
+        self.gamestates_np = None
+
+        while self.game_status in [GameStatus.GAME_OVER, GameStatus.WIN]:
+            self.handle_events()
+            self.clock.tick(CONSTANTS.FPS)
+
+    def start(self):
+        self.get_game_screen()
+        self.prepare_environment()
+        self.place_obstacles_loop()
+        self.game_loop()
+        self.game_end_loop()

@@ -1,7 +1,5 @@
 import pygame
 
-pygame.font.init()
-
 FPS = 60
 WIDTH = 1200
 HEIGHT = 900
@@ -14,14 +12,6 @@ L_GREEN = pygame.Color(0, 220, 0, 255)
 D_GREEN = pygame.Color(0, 80, 0)
 DARK_RED = pygame.Color(255, 100, 100)
 YELLOW = pygame.Color(220, 220, 0)
-
-# Font constants
-SPEED_FONT = pygame.font.SysFont('comicsans', 50)
-POINTS_FONT = pygame.font.SysFont('comicsans', 50)
-W_FONT = pygame.font.SysFont('comicsans', 32)
-A_FONT = pygame.font.SysFont('comicsans', 32)
-S_FONT = pygame.font.SysFont('comicsans', 32)
-D_FONT = pygame.font.SysFont('comicsans', 32)
 
 # Game related constants
 COLLISION_EVENT = pygame.USEREVENT + 1
@@ -69,7 +59,7 @@ GAME_START_POSITIONS = [
 
 # GameState tracking
 SAVE_GAMESTATE_TO_FILE = True
-GAMESTATE_SAVE_FILENAME_FORMAT = 'gamestates_{}.csv'
+GAMESTATE_SAVE_FILENAME = 'assets/gamestate/gamestates.csv'
 
 # Obstacles related
 OBSTACLE_DEFAULT_RADIUS = 20

@@ -1,6 +1,6 @@
-from src.game import Game
+from src.menu_game import MenuGame
 
-g = Game()
+g = MenuGame()
 
 while g.running:
     g.curr_menu.display_menu()
