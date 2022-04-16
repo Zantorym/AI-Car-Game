@@ -20,4 +20,5 @@ class DQN(nn.Module):
         x = self.activation2(x)
         x = self.linear3(x)
         x = self.softmax(x)
+        x = x.to(DEVICE)
         return x
