@@ -31,10 +31,11 @@ class Agent:
 
         self.steps_done = 0
 
-    def epsilon(self):
+    def epsilon(self, update_steps: bool = True):
         eps = CONSTANTS.EPS_END + (CONSTANTS.EPS_START - CONSTANTS.EPS_END) * \
             math.exp(-1. * self.steps_done / CONSTANTS.EPS_DECAY)
-        self.steps_done += 1
+        if update_steps:
+            self.steps_done += 1
         return eps
 
     def select_action(self, state):

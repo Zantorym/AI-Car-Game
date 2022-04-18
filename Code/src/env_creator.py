@@ -1,8 +1,9 @@
 import json
 from random import choice, randint
 from typing import Tuple
+from src import constants as CONSTANTS
+from src.commonUtils import load_gamestates_from_csv
 from src.environment import Environment
-import src.constants as CONSTANTS
 
 
 class EnvironmentCreator:
@@ -10,11 +11,16 @@ class EnvironmentCreator:
                  randomize: bool = False,
                  settings_file: str = './env_random_settings.json',
                  has_goal: bool = True,
+                 use_user_data_for_rewards: bool = False,
                  ):
         self.randomized = randomize
         self.has_goal = has_goal
         if randomize:
             self.random_settings = self.read_settings_file(settings_file)
+
+        self.use_user_data_for_rewards = use_user_data_for_rewards
+        if use_user_data_for_rewards:
+            self.user_data = load_gamestates_from_csv()
 
     def create_environment(self,
                            track_num: int) -> Environment:
@@ -30,8 +36,12 @@ class EnvironmentCreator:
                 (pos, angle) = self.generate_car_start_pos_n_angle(track_num)
                 speed = self.generate_car_start_speed()
                 steer_angle = self.generate_car_start_steer_angle()
-                env = Environment(track_num, pos, angle, speed, steer_angle,
-                                  has_goal=self.has_goal)
+                if self.use_user_data_for_rewards:
+                    env = Environment(track_num, pos, angle, speed, steer_angle,
+                                      has_goal=self.has_goal, user_data=self.user_data)
+                else:
+                    env = Environment(track_num, pos, angle, speed, steer_angle,
+                                      has_goal=self.has_goal)
                 env.reset()
                 if self.is_valid_start(env):
                     return env

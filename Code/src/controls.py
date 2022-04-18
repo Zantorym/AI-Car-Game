@@ -1,4 +1,5 @@
 import pygame
+import numpy
 from src.enums import Steering, Acceleration
 
 '''
@@ -59,7 +60,7 @@ class GameControls:
             w = 1
         else:
             w = 0
-        
+
         if action in [2, 7, 8]:
             s = 1
         else:
@@ -74,8 +75,19 @@ class GameControls:
             d = 1
         else:
             d = 0
-        
+
         return (w, a, s, d)
+
+    @staticmethod
+    def gamestates_to_actions(controls: numpy.ndarray) -> int:
+        # w, a, s, d
+        keys = {
+            pygame.K_w: True if controls[0] > 0 else False,
+            pygame.K_a: True if controls[1] > 0 else False,
+            pygame.K_s: True if controls[2] > 0 else False,
+            pygame.K_d: True if controls[3] > 0 else False,
+        }
+        return GameControls.keys_to_actions(keys)
 
     @staticmethod
     def action_to_car_controls(action: int):
@@ -94,3 +106,16 @@ class GameControls:
             steering = Steering.NONE
 
         return (steering, acceleration)
+
+    @staticmethod
+    def is_inverse_controls(action_a: int, action_b: int) -> bool:
+        if (action_a == 1 and action_b == 2) or \
+            (action_a == 2 and action_b == 1) or \
+            (action_a == 3 and action_b == 4) or \
+            (action_a == 4 and action_b == 3) or \
+            (action_a == 5 and action_b == 8) or \
+            (action_a == 8 and action_b == 5) or \
+            (action_a == 6 and action_b == 7) or \
+                (action_a == 7 and action_b == 6):
+            return True
+        return False
