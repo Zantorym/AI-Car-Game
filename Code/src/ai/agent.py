@@ -20,6 +20,9 @@ class Agent:
         self.target_net = DQN(Agent._input_size,
                               GameControls.action_space_size)
         # self.target_net = self.target_net.float()
+        
+        self.policy_net.to(DEVICE)
+        self.target_net.to(DEVICE)
         self.target_net.load_state_dict(self.policy_net.state_dict())
         self.target_net.eval()
 
