@@ -15,9 +15,6 @@ class Agent:
     _input_size = 15
 
     def __init__(self):
-        '''
-        If there is an existing model load weights from previous policy in the new policy
-        '''
         self.policy_net = DQN(Agent._input_size,
                               GameControls.action_space_size)
         # self.policy_net = self.policy_net.float()
@@ -57,9 +54,6 @@ class Agent:
             return action
 
     def update_target_net_weights(self):
-        '''
-        Get called after every 10 episodes
-        '''
         self.target_net.load_state_dict(self.policy_net.state_dict())
 
     def optimize_model(self):
@@ -110,3 +104,6 @@ class Agent:
         weights = torch.load(filename)
         self.policy_net.load_state_dict(weights)
         self.target_net.load_state_dict(weights)
+
+    def predict_action(self, current_state):
+        return self.target_net.eval(current_state)

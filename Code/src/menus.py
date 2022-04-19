@@ -1,5 +1,6 @@
 import pygame
 from src.game import Game
+from src.aigame import AIGame
 from src.game_train import GameTrain
 
 
@@ -153,43 +154,26 @@ class TrackMenu(Menu):
             self.run_display = False
 
 
-class OptionsMenu(Menu):
+class OptionsMenu(TrackMenu):
     def __init__(self, game):
-        Menu.__init__(self, game)
-        self.state = 'Track'
-        self.trackx, self.tracky = self.mid_w, self.mid_h + 30
-        self.obsticlesx, self.obsticlesy = self.mid_w, self.mid_h + 60
-        self.cursor_rect.midtop = (self.trackx + self.offset, self.tracky)
-
-    def display_menu(self):
-        self.run_display = True
-        while self.run_display:
-            self.game.check_events()
-            self.check_input()
-            self.game.display.fill((0, 0, 0))
-            self.game.draw_text(
-                'Options', 30, self.game.DISPLAY_W/2, self.game.DISPLAY_H/2 - 20)
-            self.game.draw_text(
-                'Select obsticles', 20, self.game.DISPLAY_W/2, self.game.DISPLAY_H/2 + 10)
-            self.draw_cursor()
-            self.blit_screen()
+        TrackMenu.__init__(self, game)
 
     def check_input(self):
+        self.move_cursor()
         if self.game.BACK_KEY:
             self.game.curr_menu = self.game.main_menu
             self.run_display = False
-        elif self.game.UP_KEY or self.game.DOWN_KEY:
-            if self.state == 'Track':
-                self.state = 'Obsticles'
-                self.cursor_rect.midtop = (
-                    self.obsticlesx + self.offset, self.obsticlesy)
-            elif self.state == 'Obsticles':
-                self.state = 'Track'
-                self.cursor_rect.midtop = (
-                    self.trackx + self.offset, self.tracky)
         elif self.game.START_KEY:
-            # Have to create menu for track and obsticle selection
-            pass
+            if self.state == 'Track 1':
+                game = AIGame(0)
+                game.start()
+            elif self.state == 'Track 2':
+                game = AIGame(1)
+                game.start()
+            elif self.state == 'Track 3':
+                game = AIGame(2)
+                game.start()
+            self.run_display = False
 
 
 class CreditsMenu(Menu):
