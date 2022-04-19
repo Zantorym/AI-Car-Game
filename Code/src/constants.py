@@ -78,3 +78,4 @@ NUM_EPISODES = 100000
 MAX_TIMESTEPS_PER_EPISODE = 15000
 MODEL_PATH = 'assets/model/ai_car.h5'
 MODEL_PARAMS = 'assets/model/ai_car_params.model'
+CUTOFF_DISTANCE_FOR_REWARD = 0.30

@@ -2,6 +2,7 @@ import numpy
 import pygame
 import src.constants as CONSTANTS
 from typing import Tuple
+from sklearn.metrics.pairwise import euclidean_distances
 from src.observations import Observations
 from src.car import Car
 from src.track import Track
@@ -20,6 +21,7 @@ class Environment:
         car_speed: float = 0.0,
         car_steer_angle: float = 0.0,
         has_goal: bool = True,
+        user_data: numpy.ndarray = None,
     ):
         self.track_num = track_num
         self.start_car_pos = car_start
@@ -32,12 +34,16 @@ class Environment:
         self.track_group = pygame.sprite.Group()
         self.track_group.add(self.track)
 
-
         self.has_goal = has_goal
         if has_goal:
             self.goal = Goal(*self.get_goal_settings())
             self.goal_group = pygame.sprite.Group()
             self.goal_group.add(self.goal)
+
+        self.user_data = user_data
+        if user_data is not None:
+            self.user_data_controls = self.user_data[:, 0:4]
+            self.user_data_observations = self.user_data[:, 4:-2]
 
     def get_goal_settings(self):
         game_start_position = CONSTANTS.GAME_START_POSITIONS[self.track_num]
@@ -54,6 +60,8 @@ class Environment:
 
         self.car_group = pygame.sprite.GroupSingle()
         self.car_group.add(self.car)
+
+        self.prev_state = self.observation()
 
     def has_collide_track(self):
         collisions = pygame.sprite.spritecollide(
@@ -97,9 +105,8 @@ class Environment:
     def gamestate_as_np(self, action: int) -> numpy.array:
         np = numpy.array([
             *GameControls.actions_to_keys(action),
-            self.car.speed, self.car.steer_angle,
-            *self.observations.ray_lengths(),
-            self.observations.distance_travelled,
+            *self.observation(),
+            # self.observations.distance_travelled,
             1 if self.game_over else 0,
             1 if self.win else 0,
         ])
@@ -117,7 +124,19 @@ class Environment:
         ])
         return np
 
-    def reward(self) -> float:
+    def reward(self,
+               prev_state: numpy.ndarray,
+               next_state: numpy.ndarray,
+               action: int) -> float:
+        if self.user_data is None:
+            return self.observation_based_reward(prev_state, next_state, action)
+        else:
+            return self.user_data_based_reward(prev_state, next_state, action)
+
+    def observation_based_reward(self,
+                                 prev_state: numpy.ndarray,
+                                 next_state: numpy.ndarray,
+                                 action: int) -> float:
         if self.game_over:
             return -1.0
         elif self.car.speed >= CONSTANTS.MAX_SPEED * 0.75:
@@ -129,12 +148,41 @@ class Environment:
         else:
             return -0.25
 
+    def user_data_based_reward(self,
+                               prev_state: numpy.ndarray,
+                               next_state: numpy.ndarray,
+                               action: int) -> float:
+        # Check first if game over
+        if self.game_over:
+            return -1.0
+
+        # Otherwise compare against user action
+        distances = euclidean_distances(
+            numpy.expand_dims(prev_state, axis=0), self.user_data_observations)
+        min_index = numpy.argmin(distances)
+        min_distance = distances[0][min_index]
+        user_control = self.user_data_controls[min_index]
+        user_action = GameControls.gamestates_to_actions(user_control)
+        if user_action == action:
+            if min_distance <= CONSTANTS.CUTOFF_DISTANCE_FOR_REWARD:
+                # print("Distance:", min_distance)
+                return 1.0
+            else:
+                return 0.0
+        else:
+            return -1.0
+        # elif GameControls.is_inverse_controls(user_action, action):
+        #     return -1.0
+        # else:
+        #     return 0.0
+
     def done(self) -> bool:
         return self.game_over or self.win
 
     def step(self, action: int):
         self.next(action)
         next_state = self.observation()
-        reward = self.reward()
+        reward = self.reward(self.prev_state, next_state, action)
         done = self.done()
+        self.prev_state = next_state
         return (next_state, reward, done, None)

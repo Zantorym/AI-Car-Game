@@ -1,3 +1,4 @@
+import sys
 import numpy
 import pygame
 from pygame.locals import (
@@ -18,7 +19,7 @@ from src.commonUtils import print_text, save_gamestates_to_csv
 
 class Game:
     def __init__(self, track_num: TrackNum):
-        self.environment: Environment = EnvironmentCreator().create_environment(track_num)
+        self.environment: Environment = EnvironmentCreator(has_goal=False).create_environment(track_num)
         self.obstacles: List[Obstacle] = []
         self.game_status = GameStatus.PLACE_OBSTACLES
         self.clock = pygame.time.Clock()
@@ -143,6 +144,10 @@ class Game:
         while self.game_status in [GameStatus.GAME_OVER, GameStatus.WIN]:
             self.handle_events()
             self.clock.tick(CONSTANTS.FPS)
+
+        if self.game_status == GameStatus.QUIT:
+            pygame.quit()
+            sys.exit()
 
     def start(self):
         self.get_game_screen()

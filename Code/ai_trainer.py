@@ -14,7 +14,7 @@ pygame.display.set_caption("Crazy Driver")
 screen = pygame.display.set_mode((CONSTANTS.WIDTH, CONSTANTS.HEIGHT))
 screen.fill((255, 255, 255))
 
-creator = EnvironmentCreator(True, has_goal=False)
+creator = EnvironmentCreator(True, has_goal=False, use_user_data_for_rewards=True)
 agent = Agent()
 clock = pygame.time.Clock()
 
@@ -28,6 +28,7 @@ for i_episode in range(num_episodes):
     state = torch.from_numpy(env.observation()).unsqueeze(0).float()
 
     print('Starting episode no.:', i_episode)
+    print('Explore probability:', agent.epsilon(False))
 
     for t in count():
         # Select and perform an action
