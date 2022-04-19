@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="840c7e7d-425c-4dcd-bf17-1e67d7b4636e" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Code/src/menu_game.py" beforeDir="false" afterPath="$PROJECT_DIR$/Code/src/menu_game.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Code/src/menus.py" beforeDir="false" afterPath="$PROJECT_DIR$/Code/src/menus.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

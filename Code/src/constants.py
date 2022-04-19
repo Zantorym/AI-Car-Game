@@ -59,9 +59,9 @@ GAME_START_POSITIONS = [
 
 # GameState tracking
 SAVE_GAMESTATE_TO_FILE = True
-GAMESTATE_SAVE_FILENAME = 'gamestates.csv'
+GAMESTATE_SAVE_FILENAME = 'assets/gamestate/gamestates.csv'
 SAVE_TRAINED_MODEL_TO_FILE = True
-TRAINED_MODEL_SAVE_FILENAME = 'ai-model.pkl'
+TRAINED_MODEL_SAVE_FILENAME = 'assets/model/ai-model.pkl'
 
 # Obstacles related
 OBSTACLE_DEFAULT_RADIUS = 20
@@ -76,8 +76,6 @@ EPS_END = 0.001
 EPS_DECAY = 5000
 TARGET_UPDATE = 10
 REPLAY_MEMORY_SIZE = 10000
-NUM_EPISODES = 42
+NUM_EPISODES = 75
 MAX_TIMESTEPS_PER_EPISODE = 15000
-MODEL_PATH = 'assets/model/ai_car.h5'
-MODEL_PARAMS = 'assets/model/ai_car_params.model'
 CUTOFF_DISTANCE_FOR_REWARD = 0.30
