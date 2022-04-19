@@ -2,6 +2,7 @@ import math
 import random
 import torch
 from torch import optim
+import os
 from src import constants as CONSTANTS
 from src.controls import GameControls
 from src.ai.device import DEVICE
@@ -14,6 +15,9 @@ class Agent:
     _input_size = 15
 
     def __init__(self):
+        '''
+        If there is an existing model load weights from previous policy in the new policy
+        '''
         self.policy_net = DQN(Agent._input_size,
                               GameControls.action_space_size)
         # self.policy_net = self.policy_net.float()
@@ -53,6 +57,9 @@ class Agent:
             return action
 
     def update_target_net_weights(self):
+        '''
+        Get called after every 10 episodes
+        '''
         self.target_net.load_state_dict(self.policy_net.state_dict())
 
     def optimize_model(self):
@@ -84,7 +91,7 @@ class Agent:
             non_final_next_states).max(1)[0].detach()
 
         expected_state_action_values = (
-            next_state_values * CONSTANTS.GAMMA) + reward_batch
+                                               next_state_values * CONSTANTS.GAMMA) + reward_batch
 
         criterion = torch.nn.SmoothL1Loss()
         loss = criterion(state_action_values,
