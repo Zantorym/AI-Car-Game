@@ -4,3 +4,4 @@
 /Code/.idea
 
 *.pyc
+**/*.pyc
