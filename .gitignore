@@ -3,4 +3,5 @@
 /Code/venv
 /Code/.idea
 
-*.pyc 
+*.pyc
+**/*.pyc
