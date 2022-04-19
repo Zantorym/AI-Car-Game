@@ -2,6 +2,7 @@ import math
 import random
 import torch
 from torch import optim
+import os
 from src import constants as CONSTANTS
 from src.controls import GameControls
 from src.ai.device import DEVICE
@@ -14,13 +15,18 @@ class Agent:
     _input_size = 15
 
     def __init__(self):
+        '''
+        If there is an existing model load weights from previous policy in the new policy
+        '''
         self.policy_net = DQN(Agent._input_size,
                               GameControls.action_space_size)
+        if os.path.isfile(CONSTANTS.MODEL_PATH):
+            self.load_saved_model()
         # self.policy_net = self.policy_net.float()
         self.target_net = DQN(Agent._input_size,
                               GameControls.action_space_size)
         # self.target_net = self.target_net.float()
-        
+
         self.policy_net.to(DEVICE)
         self.target_net.to(DEVICE)
         self.target_net.load_state_dict(self.policy_net.state_dict())
@@ -33,7 +39,7 @@ class Agent:
 
     def epsilon(self):
         eps = CONSTANTS.EPS_END + (CONSTANTS.EPS_START - CONSTANTS.EPS_END) * \
-            math.exp(-1. * self.steps_done / CONSTANTS.EPS_DECAY)
+              math.exp(-1. * self.steps_done / CONSTANTS.EPS_DECAY)
         self.steps_done += 1
         return eps
 
@@ -52,7 +58,12 @@ class Agent:
             return action
 
     def update_target_net_weights(self):
+        '''
+        Get called after every 10 episodes
+        '''
         self.target_net.load_state_dict(self.policy_net.state_dict())
+        self.save_model()
+        self.save_model_params()
 
     def optimize_model(self):
         batch_size = CONSTANTS.BATCH_SIZE
@@ -83,7 +94,7 @@ class Agent:
             non_final_next_states).max(1)[0].detach()
 
         expected_state_action_values = (
-            next_state_values * CONSTANTS.GAMMA) + reward_batch
+                                               next_state_values * CONSTANTS.GAMMA) + reward_batch
 
         criterion = torch.nn.SmoothL1Loss()
         loss = criterion(state_action_values,
@@ -94,3 +105,19 @@ class Agent:
         for param in self.policy_net.parameters():
             param.grad.data.clamp_(-1, 1)
         self.optimizer.step()
+
+    def save_model(self):
+        print('Saving model')
+        torch.save(self.target_net, CONSTANTS.MODEL_PATH)
+
+    def save_model_params(self):
+        print('Saving model params')
+        torch.save(self.policy_net.state_dict(), CONSTANTS.MODEL_PARAMS)
+
+    def load_saved_model(self):
+        print('Loading model')
+        return torch.load(CONSTANTS.MODEL_PATH)
+
+    def load_saved_model_params(self):
+        print('Loading model params')
+        self.policy_net.load_state_dict(torch.load(CONSTANTS.MODEL_PARAMS))
