@@ -1,5 +1,6 @@
 import pygame
-from main import main
+from src.game import Game
+from src.game_train import GameTrain
 
 
 class Menu():
@@ -7,11 +8,11 @@ class Menu():
         self.game = game
         self.mid_w, self.mid_h = self.game.DISPLAY_W / 2, self.game.DISPLAY_H / 2
         self.run_display = True
-        self.cursor_rect = pygame.Rect(0, 0, 20, 20)
+        self.cursor_rect = pygame.Rect(0, 0, 100, 20)
         self.offset = -100
 
     def draw_cursor(self):
-        self.game.draw_text('X', 15, self.cursor_rect.x, self.cursor_rect.y)
+        self.game.draw_text('X', 20, self.cursor_rect.x, self.cursor_rect.y)
 
     def blit_screen(self):
         self.game.window.blit(self.game.display, (0, 0))
@@ -24,8 +25,8 @@ class MainMenu(Menu):
         Menu.__init__(self, game)
         self.state = "Start"
         self.startx, self.starty = self.mid_w, self.mid_h + 30
-        self.optionsx, self.optionsy = self.mid_w, self.mid_h + 60
-        self.creditsx, self.creditsy = self.mid_w, self.mid_h + 90
+        self.playaix, self.playaiy = self.mid_w, self.mid_h + 60
+        self.trainaix, self.trainaiy = self.mid_w, self.mid_h + 90
         self.cursor_rect.midtop = (self.startx + self.offset, self.starty)
 
     def display_menu(self):
@@ -36,9 +37,10 @@ class MainMenu(Menu):
             self.game.display.fill(self.game.BLACK)
             self.game.draw_text(
                 'Main Menu', 30, self.game.DISPLAY_W/2, self.game.DISPLAY_H/2 - 20)
-            self.game.draw_text('Start Game', 30, self.startx, self.starty)
-            self.game.draw_text('Options', 30, self.optionsx, self.optionsy)
-            self.game.draw_text('Credits', 30, self.creditsx, self.creditsy)
+            self.game.draw_text('Play Game', 30, self.startx, self.starty)
+            self.game.draw_text('AI Plays Game', 30, self.playaix, self.playaiy)
+            self.game.draw_text('Train AI', 30,
+                                self.trainaix, self.trainaiy)
             self.draw_cursor()
             self.blit_screen()
 
@@ -46,11 +48,11 @@ class MainMenu(Menu):
         if self.game.DOWN_KEY:
             if self.state == 'Start':
                 self.cursor_rect.midtop = (
-                    self.optionsx + self.offset, self.optionsy)
+                    self.playaix + self.offset, self.playaiy)
                 self.state = 'Options'
             elif self.state == 'Options':
                 self.cursor_rect.midtop = (
-                    self.creditsx + self.offset, self.creditsy)
+                    self.trainaix + self.offset, self.trainaiy)
                 self.state = 'Credits'
             elif self.state == 'Credits':
                 self.cursor_rect.midtop = (
@@ -59,7 +61,7 @@ class MainMenu(Menu):
         elif self.game.UP_KEY:
             if self.state == 'Start':
                 self.cursor_rect.midtop = (
-                    self.creditsx + self.offset, self.creditsy)
+                    self.trainaix + self.offset, self.trainaiy)
                 self.state = 'Credits'
             elif self.state == 'Options':
                 self.cursor_rect.midtop = (
@@ -67,7 +69,7 @@ class MainMenu(Menu):
                 self.state = 'Start'
             elif self.state == 'Credits':
                 self.cursor_rect.midtop = (
-                    self.optionsx + self.offset, self.optionsy)
+                    self.playaix + self.offset, self.playaiy)
                 self.state = 'Options'
 
     def check_input(self):
@@ -140,11 +142,14 @@ class TrackMenu(Menu):
             self.run_display = False
         elif self.game.START_KEY:
             if self.state == 'Track 1':
-                main(0)
+                game = Game(0)
+                game.start()
             elif self.state == 'Track 2':
-                main(1)
+                game = Game(1)
+                game.start()
             elif self.state == 'Track 3':
-                main(2)
+                game = Game(2)
+                game.start()
             self.run_display = False
 
 
@@ -198,12 +203,19 @@ class CreditsMenu(Menu):
             self.check_input()
             self.game.display.fill(self.game.BLACK)
             self.game.draw_text(
-                'Credits', 20, self.game.DISPLAY_W/2, self.game.DISPLAY_H/2 - 20)
+                'Train AI', 20, self.game.DISPLAY_W/2, self.game.DISPLAY_H/2 - 20)
             self.game.draw_text(
-                '(names)', 30, self.game.DISPLAY_W/2, self.game.DISPLAY_H/2 + 20)
+                'Start', 30, self.game.DISPLAY_W/2, self.game.DISPLAY_H/2 + 20)
             self.blit_screen()
 
     def check_input(self):
-        if self.game.START_KEY or self.game.BACK_KEY:
+        # if self.game.START_KEY or self.game.BACK_KEY:
+        #     self.game.curr_menu = self.game.main_menu
+        #     self.run_display = False
+
+        if self.game.BACK_KEY:
             self.game.curr_menu = self.game.main_menu
             self.run_display = False
+        elif self.game.START_KEY:
+            trainer = GameTrain()
+            trainer.start()

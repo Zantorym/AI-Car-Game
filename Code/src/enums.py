@@ -9,6 +9,7 @@ class GameStatus(Enum):
     WIN = 4
     ESC = 5
     QUIT = 6
+    TRAIN_COMPLETE = 7
 
 
 class PlayerType(Enum):
@@ -20,11 +21,6 @@ class TrackNum(Enum):
     TRACK0 = 0
     TRACK1 = 1
     TRACK2 = 2
-
-
-class CarStartPosType(Enum):
-    TRACK_DEFAULTS = 0
-    RANDOMIZED = 1
 
 
 class Steering(Enum):

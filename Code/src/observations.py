@@ -7,7 +7,7 @@ from src.ray import Ray
 from src.commonUtils import normalize_angle
 
 
-class GameState:
+class Observations:
     def __init__(self, car: Car, track: Track):
         self.car_position: Vector2 = car.position.copy()
         self.car_facing: float = car.angle
@@ -29,7 +29,7 @@ class GameState:
             # starts 90 degrees to the right
             ray_angle = normalize_angle(self.car_facing - 90.0 + angle)
             ray = Ray(self.car_position,
-                      CONSTANTS.DEFAULT_RAY_LENGHT, ray_angle)
+                      CONSTANTS.DEFAULT_RAY_LENGTH, ray_angle)
             # ray_end = Vector2(ray.get_pt_int_w_mask(self.track_mask, self.track_topleft))
             ray_end = Vector2(ray.get_pt_int_w_track(self.track))
             length = Vector2(ray_end - self.car_position).length()

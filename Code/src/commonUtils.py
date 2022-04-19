@@ -1,3 +1,4 @@
+import os
 import numpy
 from typing import Tuple
 from pygame import Color, Vector2
@@ -34,4 +35,10 @@ def is_intersecting_color(track_color: Color) -> bool:
 def save_gamestates_to_csv(gamestates: numpy.ndarray):
     if gamestates is not None:
         with open(CONSTANTS.GAMESTATE_SAVE_FILENAME, 'ab') as f:
-            numpy.savetxt(f, gamestates, fmt='%10.5f')
+            numpy.savetxt(f, gamestates, fmt='%5.10f')
+
+def load_gamestates_from_csv() -> numpy.ndarray:
+    filename = CONSTANTS.GAMESTATE_SAVE_FILENAME
+    if os.path.exists(filename) and os.path.isfile(filename):
+        np = numpy.loadtxt(filename)
+        return np
