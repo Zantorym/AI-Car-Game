@@ -17,8 +17,8 @@ class MenuGame():
         self.BLACK, self.WHITE = (0, 0, 0), (255, 255, 255)
         self.main_menu = MainMenu(self)
         self.track_menu = TrackMenu(self)
-        self.options = OptionsMenu(self)
-        self.credits = CreditsMenu(self)
+        self.options = AIMenu(self)
+        self.credits = AITrainMenu(self)
         self.curr_menu = self.main_menu
 
     def game_loop(self):

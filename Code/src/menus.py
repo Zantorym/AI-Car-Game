@@ -154,7 +154,7 @@ class TrackMenu(Menu):
             self.run_display = False
 
 
-class OptionsMenu(TrackMenu):
+class AIMenu(TrackMenu):
     def __init__(self, game):
         TrackMenu.__init__(self, game)
 
@@ -176,7 +176,7 @@ class OptionsMenu(TrackMenu):
             self.run_display = False
 
 
-class CreditsMenu(Menu):
+class AITrainMenu(Menu):
     def __init__(self, game):
         Menu.__init__(self, game)
 
