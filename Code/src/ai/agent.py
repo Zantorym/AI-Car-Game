@@ -20,7 +20,7 @@ class Agent:
         self.target_net = DQN(Agent._input_size,
                               GameControls.action_space_size)
         # self.target_net = self.target_net.float()
-        
+
         self.policy_net.to(DEVICE)
         self.target_net.to(DEVICE)
         self.target_net.load_state_dict(self.policy_net.state_dict())
@@ -95,3 +95,11 @@ class Agent:
         for param in self.policy_net.parameters():
             param.grad.data.clamp_(-1, 1)
         self.optimizer.step()
+
+    def save_weights(self, filename: str):
+        torch.save(self.policy_net.state_dict(), filename)
+
+    def load_weights(self, filename: str):
+        weights = torch.load(filename)
+        self.policy_net.load_state_dict(weights)
+        self.target_net.load_state_dict(weights)

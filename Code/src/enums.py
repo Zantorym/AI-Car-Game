@@ -9,6 +9,7 @@ class GameStatus(Enum):
     WIN = 4
     ESC = 5
     QUIT = 6
+    TRAIN_COMPLETE = 7
 
 
 class PlayerType(Enum):
