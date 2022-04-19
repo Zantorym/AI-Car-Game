@@ -2,15 +2,9 @@ from src.game import Game
 import sys
 import pygame
 import torch
-from pygame.locals import (
-    KEYDOWN,
-    QUIT,
-    K_ESCAPE,
-)
 from src import constants as CONSTANTS
 from src.enums import GameStatus, TrackNum
 from src.ai.agent import Agent
-from src.obstacle import Obstacle
 from src.commonUtils import print_text, save_gamestates_to_csv
 
 class AIGame(Game):
@@ -18,28 +12,6 @@ class AIGame(Game):
         Game.__init__(self, track_num)
         self.agent = Agent()
         self.agent.load_weights(CONSTANTS.TRAINED_MODEL_SAVE_FILENAME)
-
-
-    # TODO : can delete later
-    def handle_events(self):
-        for event in pygame.event.get():
-            if event.type == KEYDOWN:
-                if event.key == K_ESCAPE:
-                    self.game_status = GameStatus.ESC
-
-            elif event.type == QUIT:
-                self.game_status = GameStatus.QUIT
-
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                mouse_x, mouse_y = pygame.mouse.get_pos()
-                if CONSTANTS.PRINT_MOUSE_CLICK_LOCATION:
-                    print((mouse_x, mouse_y))
-                if self.game_status == GameStatus.PLACE_OBSTACLES:
-                    obstacle = Obstacle((mouse_x, mouse_y))
-                    self.environment.place_obstacle(obstacle)
-                    self.obstacles.append(obstacle)
-                    if len(self.obstacles) == CONSTANTS.MAX_OBSTACLES_PER_TRACK:
-                        self.game_status = GameStatus.GAME_START
 
     def game_loop(self):
         pygame.event.set_allowed([
@@ -54,8 +26,7 @@ class AIGame(Game):
             self.handle_events()
 
             current_state = torch.from_numpy(self.environment.observation()).unsqueeze(0).float()
-            action = self.agent.select_action(current_state)
-            print(action)
+            action = self.agent.predict_action(current_state)
 
             # Car has been controlled, update status to ongoing
             if self.game_status == GameStatus.GAME_START and action != 0:

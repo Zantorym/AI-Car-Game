@@ -53,6 +53,10 @@ class Agent:
                                   dtype=torch.long)
             return action
 
+    def predict_action(self, current_state):
+        actions = self.target_net(current_state)
+        return actions.max(1)[1].view(1, 1)
+
     def update_target_net_weights(self):
         self.target_net.load_state_dict(self.policy_net.state_dict())
 
@@ -105,5 +109,3 @@ class Agent:
         self.policy_net.load_state_dict(weights)
         self.target_net.load_state_dict(weights)
 
-    def predict_action(self, current_state):
-        return self.target_net.eval(current_state)
