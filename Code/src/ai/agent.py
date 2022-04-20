@@ -102,6 +102,7 @@ class Agent:
         self.optimizer.step()
 
     def save_weights(self, filename: str):
+        print('Saving Weights')
         torch.save(self.policy_net.state_dict(), filename)
 
     def load_weights(self, filename: str):

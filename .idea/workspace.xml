@@ -6,7 +6,6 @@
       <change beforePath="$PROJECT_DIR$/Code/assets/model/ai-model.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/Code/assets/model/ai-model.pkl" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Code/src/ai/agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/Code/src/ai/agent.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Code/src/ai/dqn.py" beforeDir="false" afterPath="$PROJECT_DIR$/Code/src/ai/dqn.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Code/src/aigame.py" beforeDir="false" afterPath="$PROJECT_DIR$/Code/src/aigame.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Code/src/constants.py" beforeDir="false" afterPath="$PROJECT_DIR$/Code/src/constants.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
