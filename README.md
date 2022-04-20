@@ -9,6 +9,16 @@ Check out our [website](http://aidi-2005-ai-car-game.s3-website.ca-central-1.ama
 - Jaspreet Singh Marwah [(Zantorym)](https://github.com/Zantorym)
 - Vaibhav Jain
 
+## Installation and Usage
+
+Dowload or clone repo
+Go to the below link and download the .pkg and .exe files
+https://drive.google.com/drive/folders/1HMJa5bPTzg0LzoAVUNR8ag7bdd_LjEqO?usp=sharing
+
+- place the .pkg file in Code/build/main_menu/ directory
+- place the .exe file in Code/dist/ directory
+
+Run .exe file to enjoy :)
 
 ## Progress so far
 
