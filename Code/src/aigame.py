@@ -5,13 +5,13 @@ import torch
 from src import constants as CONSTANTS
 from src.enums import GameStatus, TrackNum
 from src.ai.agent import Agent
-from src.commonUtils import print_text, save_gamestates_to_csv
+from src.commonUtils import print_text, save_gamestates_to_csv, resource_path
 
 class AIGame(Game):
     def __init__(self, track_num: TrackNum):
         Game.__init__(self, track_num)
         self.agent = Agent()
-        self.agent.load_weights(CONSTANTS.TRAINED_MODEL_SAVE_FILENAME)
+        self.agent.load_weights(resource_path(CONSTANTS.TRAINED_MODEL_SAVE_FILENAME))
 
     def game_loop(self):
         pygame.event.set_allowed([

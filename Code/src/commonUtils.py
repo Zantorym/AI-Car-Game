@@ -3,7 +3,16 @@ import numpy
 from typing import Tuple
 from pygame import Color, Vector2
 from src import constants as CONSTANTS
+import sys
 
+def resource_path(relative_path):
+    try:
+    # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 def print_text(surface, text, font, color=Color("tomato")):
     text_surface = font.render(text, True, color)
@@ -34,11 +43,11 @@ def is_intersecting_color(track_color: Color) -> bool:
 
 def save_gamestates_to_csv(gamestates: numpy.ndarray):
     if gamestates is not None:
-        with open(CONSTANTS.GAMESTATE_SAVE_FILENAME, 'ab') as f:
+        with open(resource_path(CONSTANTS.GAMESTATE_SAVE_FILENAME), 'ab') as f:
             numpy.savetxt(f, gamestates, fmt='%5.10f')
 
 def load_gamestates_from_csv() -> numpy.ndarray:
     filename = CONSTANTS.GAMESTATE_SAVE_FILENAME
-    if os.path.exists(filename) and os.path.isfile(filename):
-        np = numpy.loadtxt(filename)
+    if os.path.exists(resource_path(filename)) and os.path.isfile(resource_path(filename)):
+        np = numpy.loadtxt(resource_path(filename))
         return np

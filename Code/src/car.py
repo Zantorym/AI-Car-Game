@@ -3,6 +3,7 @@ import src.constants as CONSTANTS
 from src.enums import Steering, Acceleration
 from math import sin, radians, degrees
 from pygame.math import Vector2
+from src.commonUtils import resource_path
 
 
 class Car(pygame.sprite.Sprite):
@@ -21,7 +22,7 @@ class Car(pygame.sprite.Sprite):
         self.position = Vector2(start_pos)
         self.velocity = Vector2((0, 0))
 
-        self.sprite = pygame.image.load(sprite_path).convert_alpha()
+        self.sprite = pygame.image.load(resource_path(sprite_path)).convert_alpha()
         self.vehicle_length = self.sprite.get_width()
 
         self.angle = angle

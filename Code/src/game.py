@@ -19,7 +19,7 @@ from src.commonUtils import print_text, save_gamestates_to_csv
 
 class Game:
     def __init__(self, track_num: TrackNum):
-        self.environment: Environment = EnvironmentCreator(has_goal=False).create_environment(track_num)
+        self.environment: Environment = EnvironmentCreator(has_goal=True).create_environment(track_num)
         self.obstacles: List[Obstacle] = []
         self.game_status = GameStatus.PLACE_OBSTACLES
         self.clock = pygame.time.Clock()

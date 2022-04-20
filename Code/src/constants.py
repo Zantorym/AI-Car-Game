@@ -13,6 +13,9 @@ D_GREEN = pygame.Color(0, 80, 0)
 DARK_RED = pygame.Color(255, 100, 100)
 YELLOW = pygame.Color(220, 220, 0)
 
+#Font Constants
+FONT_LOC = 'assets/font/OpenSans.ttf'
+
 # Game related constants
 COLLISION_EVENT = pygame.USEREVENT + 1
 STOP_GAME_ON_GAMEOVER: bool = True

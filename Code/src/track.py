@@ -2,6 +2,7 @@ import pygame
 import src.constants as CONSTANTS
 from src.obstacle import Obstacle
 from typing import Tuple
+from src.commonUtils import resource_path
 
 
 class Track(pygame.sprite.Sprite):
@@ -13,7 +14,7 @@ class Track(pygame.sprite.Sprite):
         self.track_id = track_id
         self.track_path = __TRACKS_DIR + "track" + str(track_id) + ".png"
 
-        self.image = pygame.image.load(self.track_path).convert_alpha()
+        self.image = pygame.image.load(resource_path(self.track_path)).convert_alpha()
         self.rect = self.image.get_rect(topleft=(0, CONSTANTS.OFFSET))
         self.mask = pygame.mask.from_surface(self.image)
 

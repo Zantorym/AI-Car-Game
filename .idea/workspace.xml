@@ -1,12 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="840c7e7d-425c-4dcd-bf17-1e67d7b4636e" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/Code/assets/font/OpenSans.ttf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Code/build/main_menu/Analysis-00.toc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Code/build/main_menu/EXE-00.toc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Code/build/main_menu/PKG-00.toc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Code/build/main_menu/PYZ-00.pyz" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Code/build/main_menu/PYZ-00.toc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Code/build/main_menu/Tree-00.toc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Code/build/main_menu/Tree-01.toc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Code/build/main_menu/Tree-02.toc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Code/build/main_menu/base_library.zip" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Code/build/main_menu/main_menu.exe.manifest" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Code/build/main_menu/main_menu.pkg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Code/build/main_menu/warn-main_menu.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Code/build/main_menu/xref-main_menu.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Code/dist/main_menu.exe" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Code/main_menu.spec" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Code/assets/model/ai-model.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/Code/assets/model/ai-model.pkl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Code/src/ai/agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/Code/src/ai/agent.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Code/src/ai/dqn.py" beforeDir="false" afterPath="$PROJECT_DIR$/Code/src/ai/dqn.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Code/assets/gamestate/gamestates.csv" beforeDir="false" afterPath="$PROJECT_DIR$/Code/assets/gamestate/gamestates.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Code/src/aigame.py" beforeDir="false" afterPath="$PROJECT_DIR$/Code/src/aigame.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Code/src/car.py" beforeDir="false" afterPath="$PROJECT_DIR$/Code/src/car.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Code/src/commonUtils.py" beforeDir="false" afterPath="$PROJECT_DIR$/Code/src/commonUtils.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Code/src/constants.py" beforeDir="false" afterPath="$PROJECT_DIR$/Code/src/constants.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Code/src/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/Code/src/game.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Code/src/menu_game.py" beforeDir="false" afterPath="$PROJECT_DIR$/Code/src/menu_game.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Code/src/track.py" beforeDir="false" afterPath="$PROJECT_DIR$/Code/src/track.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,6 +63,7 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
@@ -116,5 +140,8 @@
       </map>
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
   </component>
 </project>
